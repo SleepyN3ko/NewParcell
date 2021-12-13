@@ -1,5 +1,62 @@
 ﻿@page "/sell"
-<h3>Here are the goods you are selling</h3>
-@code {
 
-}
+    <head>
+        <link rel="stylesheet" href="/css/Sell.css">
+    </head>
+
+    <body>
+        <header>
+            <h1 style="text-align:center;">Your Goods</h1>
+        </header>
+
+        <div class="divTable">
+
+            <div class="headRow">
+                <div class="headCell1" align="center">Item No</div>
+                <div class="headCell2" align="center">Product</div>
+                <div class="headCell3" align="center">Details</div>
+                <div class="headCell4" align="center">Actions</div>
+            </div>
+
+
+
+            <div class="divRow">
+                <div class="divCell1">1</div>
+                <div class="divCell2">test</div>
+                <div class="divCell3">test</div>
+                <div class="divCell4">
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
+                    <br>
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
+                </div>
+            </div>
+
+            <div class="divRow">
+                <div class="divCell1">2</div>
+                <div class="divCell2">test</div>
+                <div class="divCell3">test</div>
+                <div class="divCell4">
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
+                    <br>
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
+                </div>
+            </div>
+
+            <div class="divRow">
+                <div class="divCell1">3</div>
+                <div class="divCell2">test</div>
+                <div class="divCell3">test</div>
+                <div class="divCell4">
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
+                    <br>
+                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
+                </div>
+            </div>
+
+        </div>
+    </body>
+
+
+ @code {
+
+            }
