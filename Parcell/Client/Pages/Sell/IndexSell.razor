@@ -1,4 +1,9 @@
 ﻿@page "/sell"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+
 
     <head>
         <link rel="stylesheet" href="/css/Sell.css">
@@ -57,6 +62,7 @@
     </body>
 
 
- @code {
+    @code {
 
-            }
+
+    }
