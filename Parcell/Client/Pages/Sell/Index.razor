@@ -17,6 +17,8 @@
 
 else
 {
+    
+
     <table class="table table-responsive">
         <thead>
             <tr>
@@ -31,8 +33,9 @@ else
         <tbody>
             @foreach (var product in Products)
             {
+                count++;
             <tr>
-                <td>@product.Id</td>
+                <td>@count</td>
                 <td>@product.Name</td>
                 <td>
                     <ul>
@@ -62,6 +65,8 @@ else
 
 
 @code {
+    public int count;
+
     private List<Product> Products;
 
     protected async override Task OnInitializedAsync()
