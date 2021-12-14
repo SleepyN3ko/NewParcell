@@ -1,50 +1,7 @@
-﻿body {
-}
+﻿
 
-.divTable {
-    display: table;
-    width: auto;
-    background-color: #eee;
+
+table {
     border-collapse: collapse;
-}
-
-.divRow {
-    display: table-row;
-    width: auto;
-}
-
-.headCell1, .headCell2, .headCell3, .headCell4 {
-    float: left;
-    display: table-column;
-    position: relative;
-    height: 45px;
-}
-
-.divCell1, .divCell2, .divCell3, .divCell4 {
-    float: left;
-    display: table-column;
-    position: relative;
-    height: 200px;
-}
-
-
-
-.divCell1, .headCell1 {
-    width: 40px;
-}
-
-.divCell2, .headCell2 {
-    width: 300px;
-}
-
-.divCell3, .headCell3 {
-    width: 650px;
-}
-
-.divCell4, .headCell4 {
-    width: 200px;
-}
-
-.divTable, .divRow, .divCell1, .divCell2, .divCell3, .headCell1, .headCell2, .headCell3, .divCell4, .headCell4 {
-    border: 0.5px solid black;
+    width : 100%,
 }
