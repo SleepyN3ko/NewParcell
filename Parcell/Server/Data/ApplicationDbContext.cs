@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Parcell.Shared.Domain;
+using Parcell.Server.Configurations.Entities;
 
 namespace Parcell.Server.Data
 {
@@ -30,7 +31,14 @@ namespace Parcell.Server.Data
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<WishListItem> WishListItems { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
+
+            builder.ApplyConfiguration(new ProductSeedConfiguration());
+            
+        }
 
 
     }
