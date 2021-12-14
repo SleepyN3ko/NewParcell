@@ -1,62 +1,85 @@
 ﻿@page "/sell"
-
-    <head>
-        <link rel="stylesheet" href="/css/Sell.css">
-    </head>
-
-    <body>
-        <header>
-            <h1 style="text-align:center;">Your Goods</h1>
-        </header>
-
-        <div class="divTable">
-
-            <div class="headRow">
-                <div class="headCell1" align="center">Item No</div>
-                <div class="headCell2" align="center">Product</div>
-                <div class="headCell3" align="center">Details</div>
-                <div class="headCell4" align="center">Actions</div>
-            </div>
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
 
 
 
-            <div class="divRow">
-                <div class="divCell1">1</div>
-                <div class="divCell2">test</div>
-                <div class="divCell3">test</div>
-                <div class="divCell4">
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
-                    <br>
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
-                </div>
-            </div>
-
-            <div class="divRow">
-                <div class="divCell1">2</div>
-                <div class="divCell2">test</div>
-                <div class="divCell3">test</div>
-                <div class="divCell4">
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
-                    <br>
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
-                </div>
-            </div>
-
-            <div class="divRow">
-                <div class="divCell1">3</div>
-                <div class="divCell2">test</div>
-                <div class="divCell3">test</div>
-                <div class="divCell4">
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">delete product</button>
-                    <br>
-                    <button class="btn" type="button" onclick="location.href = 'buyswap';">edit product</button>
-                </div>
-            </div>
-
-        </div>
-    </body>
 
 
- @code {
+<link rel="stylesheet" type="text/css" href="/css/Sell.css" />
 
+@if (Products == null)
+{
+    <div class="alert alert-info">Loading Products...</div>
+}
+
+
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Product no</th>
+                <th>Name</th>
+                <th>Details</th>
+                <th>Category</th>
+                <th>Edit product</th>
+                <th>Delete product</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Products)
+            {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>
+                    <ul>
+                        <li>Description = @product.Description</li>
+                        <li>Stock = @product.Stock</li>
+                        <li>Price = @product.Price</li>
+                    </ul>
+                </td>
+                <td>@product.P_category</td>
+                <td>
+                    <a href="/products/edit/@product.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
+            </tr>
             }
+        </tbody>
+    </table>
+}
+
+
+
+
+@code {
+    private List<Product> Products;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+
+    }
+
+    async Task Delete(int productId)
+    {
+        var product = Products.First(q => q.Id == productId);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {product.Name}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.ProductsEndpoint}/{productId}");
+            await OnInitializedAsync();
+        }
+    }
+
+}
