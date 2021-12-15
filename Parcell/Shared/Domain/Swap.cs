@@ -14,8 +14,8 @@ namespace Parcell.Shared.Domain
         public DateTime Date { get; set; }
         public int Deadline { get; set; }
 
-        public virtual User SUser { get; set; }
-        public virtual User PUser { get; set; }
+        public string Susername { get; set; }
+        public string Pusername { get; set; }
         public virtual Product SProduct { get; set; }
         public virtual Product PProduct { get; set; }
     }

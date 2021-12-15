@@ -265,8 +265,20 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int>("AmountOfCoins")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateOfBirth")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -276,10 +288,7 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Fullname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -287,6 +296,9 @@ namespace Parcell.Server.Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Nickname")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -299,13 +311,25 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Phone")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Review")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -371,12 +395,10 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -400,16 +422,14 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PaymentDetailsId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -424,12 +444,10 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<int>("TotalPrice")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PaymentDetails");
                 });
@@ -465,12 +483,10 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<string>("Thumbnail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Products");
 
@@ -502,7 +518,7 @@ namespace Parcell.Server.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CatogoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProductId")
@@ -510,7 +526,7 @@ namespace Parcell.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CatogoryId");
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ProductId");
 
@@ -536,8 +552,8 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("PUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Pusername")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SProductId")
                         .HasColumnType("int");
@@ -545,18 +561,14 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<bool>("SStatus")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("SUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Susername")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PProductId");
 
-                    b.HasIndex("PUserId");
-
                     b.HasIndex("SProductId");
-
-                    b.HasIndex("SUserId");
 
                     b.ToTable("Swaps");
                 });
@@ -584,54 +596,6 @@ namespace Parcell.Server.Data.Migrations
                     b.ToTable("SwapProducts");
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AmountOfCoins")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BillingAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateOfBirth")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fullname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nickname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Review")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Parcell.Shared.Domain.WishList", b =>
                 {
                     b.Property<int>("Id")
@@ -642,12 +606,10 @@ namespace Parcell.Server.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("WishLists");
                 });
@@ -731,15 +693,6 @@ namespace Parcell.Server.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.Order", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Parcell.Shared.Domain.OrderDetail", b =>
                 {
                     b.HasOne("Parcell.Shared.Domain.PaymentDetail", "PaymentDetails")
@@ -750,46 +703,22 @@ namespace Parcell.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("Parcell.Shared.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
                     b.Navigation("PaymentDetails");
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.PaymentDetail", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.Product", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.ProductCategory", b =>
                 {
-                    b.HasOne("Parcell.Shared.Domain.Category", "Catogory")
+                    b.HasOne("Parcell.Shared.Domain.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CatogoryId");
+                        .HasForeignKey("CategoryId");
 
                     b.HasOne("Parcell.Shared.Domain.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.Navigation("Catogory");
+                    b.Navigation("Category");
 
                     b.Navigation("Product");
                 });
@@ -800,25 +729,13 @@ namespace Parcell.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PProductId");
 
-                    b.HasOne("Parcell.Shared.Domain.User", "PUser")
-                        .WithMany()
-                        .HasForeignKey("PUserId");
-
                     b.HasOne("Parcell.Shared.Domain.Product", "SProduct")
                         .WithMany()
                         .HasForeignKey("SProductId");
 
-                    b.HasOne("Parcell.Shared.Domain.User", "SUser")
-                        .WithMany()
-                        .HasForeignKey("SUserId");
-
                     b.Navigation("PProduct");
 
-                    b.Navigation("PUser");
-
                     b.Navigation("SProduct");
-
-                    b.Navigation("SUser");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.SwapProduct", b =>
@@ -828,15 +745,6 @@ namespace Parcell.Server.Data.Migrations
                         .HasForeignKey("ProductId");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.WishList", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishListItem", b =>
