@@ -17,7 +17,6 @@ namespace CarRentalManagement.Server.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private IGenericRepository<User> _users;
         private IGenericRepository<Category> _categories;
         private IGenericRepository<Order> _orders;
         private IGenericRepository<OrderDetail> _orderdetails;
@@ -39,8 +38,6 @@ namespace CarRentalManagement.Server.Repository
 
 
 
-        public IGenericRepository<User> Users
-            => _users ??= new GenericRepository<User>(_context);
         public IGenericRepository<Category> Categories
             => _categories ??= new GenericRepository<Category>(_context);
         public IGenericRepository<Order> Orders

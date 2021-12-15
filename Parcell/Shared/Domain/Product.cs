@@ -18,7 +18,7 @@ namespace Parcell.Shared.Domain
         public string P_category { get; set; }
         public string Swap_description { get; set; }
 
-        public virtual User User { get; set; }
+        public string username { get; set; }
 
     }
 }
