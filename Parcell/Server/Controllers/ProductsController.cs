@@ -98,7 +98,7 @@ namespace Parcell.Server.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id) 
         {
             var product = await _unitOfWork.Products.Get(q => q.Id == id);
             if (product == null)
