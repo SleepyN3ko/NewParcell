@@ -55,9 +55,9 @@
                         <label class="control-label col-md-12">Category</label>
                         <div class="col">
                             <InputSelect class="form-control" @bind-Value="newproduct.Category">
-                                <option value="-- Select City --">-- Select Gender --</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                @foreach (var category in Categories) { 
+                                    <option value="@category">@category</option>
+                                }
                             </InputSelect>
                             <ValidationMessage For="@(() => newproduct.Category)" />
                         </div>
@@ -78,20 +78,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        Categories = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.CategoryEndpoint}");
-
-    }
-
-    async Task Delete(int productId)
-    {
-        var product = Products.First(q => q.Id == productId);
-
-        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {product.Name}?");
-        if (confirm)
-        {
-            await _client.DeleteAsync($"{Endpoints.ProductsEndpoint}/{productId}");
-            await OnInitializedAsync();
-        }
+        Categories = await _client.GetFromJsonAsync<List<Category>>($"{Endpoints.CategoriesEndpoint}");
     }
 
 }
