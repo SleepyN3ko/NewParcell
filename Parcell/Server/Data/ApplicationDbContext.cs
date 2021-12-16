@@ -36,7 +36,7 @@ namespace Parcell.Server.Data
 
 
             builder.ApplyConfiguration(new ProductSeedConfiguration());
-            
+
         }
 
 
