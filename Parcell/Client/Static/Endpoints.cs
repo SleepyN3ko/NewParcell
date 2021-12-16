@@ -9,5 +9,6 @@ namespace Parcell.Client.Static
     {
         private static readonly string Prefix = "api";
         public static readonly string ProductsEndpoint = $"{Prefix}/products";
+        public static readonly string CategoriesEndpoint = $"{Prefix}/categories";
     }
 }

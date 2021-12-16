@@ -1,6 +1,8 @@
 ﻿@page "/add-products"
 @inherits AddProductModalBase
-
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
 <div class="row justify-content-center">
     <div class="col-md-10">
         <div class="card mt-3 mb-3">
@@ -10,7 +12,7 @@
             <div class="card-body">
                 @if (isCreationSuccess)
                 {
-                <div class="alert alert-success" role="alert">Registration successful</div>
+                    <div class="alert alert-success" role="alert">Registration successful</div>
                 }
 
                 <EditForm Model="@newproduct" OnValidSubmit="AddProduct">
@@ -69,3 +71,27 @@
         </div>
     </div>
 </div>
+
+@code {
+
+    private List<Category> Categories;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Categories = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.CategoryEndpoint}");
+
+    }
+
+    async Task Delete(int productId)
+    {
+        var product = Products.First(q => q.Id == productId);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {product.Name}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.ProductsEndpoint}/{productId}");
+            await OnInitializedAsync();
+        }
+    }
+
+}
