@@ -1,5 +1,5 @@
 ﻿@page "/add-products"
-@inherits RegistrationModalBase
+@inherits AddProductModalBase
 
 <div class="row justify-content-center">
     <div class="col-md-10">
@@ -13,67 +13,51 @@
                 <div class="alert alert-success" role="alert">Registration successful</div>
                 }
 
-                <EditForm Model="@registration" OnValidSubmit="RegisterStudent">
+                <EditForm Model="@newproduct" OnValidSubmit="AddProduct">
                     <DataAnnotationsValidator />
                     <CustomFormValidator @ref="customFormValidator" />
 
                     <div class="form-group row">
-                        <label class="control-label col-md-12">First Name</label>
+                        <label class="control-label col-md-12">Product Name</label>
                         <div class="col">
-                            <InputText class="form-control" @bind-Value="registration.FirstName" />
-                            <ValidationMessage For="@(() => registration.FirstName)" />
+                            <InputText class="form-control" @bind-Value="newproduct.ProductName" />
+                            <ValidationMessage For="@(() => newproduct.ProductName)" />
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="control-label col-md-12">Last Name</label>
+                        <label class="control-label col-md-12">Product Description</label>
                         <div class="col">
-                            <InputText class="form-control" @bind-Value="registration.LastName" />
-                            <ValidationMessage For="@(() => registration.LastName)" />
+                            <InputText class="form-control" @bind-Value="newproduct.Description" />
+                            <ValidationMessage For="@(() => newproduct.Description)" />
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="control-label col-md-12">Email</label>
+                        <label class="control-label col-md-12">Stock</label>
                         <div class="col">
-                            <InputText class="form-control" @bind-Value="registration.Email" />
-                            <ValidationMessage For="@(() => registration.Email)" />
+                            <InputNumber class="form-control" @bind-Value="newproduct.Stock" />
+                            <ValidationMessage For="@(() => newproduct.Stock)" />
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="control-label col-md-12">User Name</label>
+                        <label class="control-label col-md-12">Price(no decimal)</label>
                         <div class="col">
-                            <InputText class="form-control" @bind-Value="registration.Username" />
-                            <ValidationMessage For="@(() => registration.Username)" />
+                            <InputNumber class="form-control" @bind-Value="newproduct.Price" />
+                            <ValidationMessage For="@(() => newproduct.Price)" />
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="control-label col-md-12">Password</label>
+                        <label class="control-label col-md-12">Category</label>
                         <div class="col">
-                            <InputText type="password" class="form-control" @bind-Value="registration.Password"></InputText>
-                            <ValidationMessage For="@(() => registration.Password)" />
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="control-label col-md-12">Confirm Password</label>
-                        <div class="col">
-                            <InputText type="password" class="form-control" @bind-Value="registration.ConfirmPassword"></InputText>
-                            <ValidationMessage For="@(() => registration.ConfirmPassword)" />
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="control-label col-md-12">Gender</label>
-                        <div class="col">
-                            <InputSelect class="form-control" @bind-Value="registration.Gender">
+                            <InputSelect class="form-control" @bind-Value="newproduct.Category">
                                 <option value="-- Select City --">-- Select Gender --</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </InputSelect>
-                            <ValidationMessage For="@(() => registration.Gender)" />
+                            <ValidationMessage For="@(() => newproduct.Category)" />
                         </div>
                     </div>
 

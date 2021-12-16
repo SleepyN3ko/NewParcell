@@ -28,7 +28,7 @@ namespace Parcell.Client.Pages.Sell.AddProducts
         protected bool isCreationSuccess = false;
 
 
-        protected async Task RegisterStudent()
+        protected async Task AddProduct()
         {
             customFormValidator.ClearFormErrors();
             isCreationSuccess = false;

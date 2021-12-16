@@ -30,5 +30,8 @@ namespace Parcell.Shared.Models
         [Required]
         [Display(Name = "Select a category")]
         public string Category { get; set; }
+
+        [Required]
+        public string Username { get; set; }
     }
 }
