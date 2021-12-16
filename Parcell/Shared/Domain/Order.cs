@@ -14,7 +14,7 @@ namespace Parcell.Shared.Domain
         public string State { get; set; }
         public int Stock { get; set; }
         public DateTime ETA { get; set; }
-        public virtual User User { get; set; }
+        public string username { get; set; }
 
     }
 }
