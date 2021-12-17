@@ -8,8 +8,6 @@ namespace Parcell.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Nickname { get; set; }
-        public string Fullname { get; set; }
         public string DateOfBirth { get; set; }
         public string Country { get; set; }
         public int Phone { get; set; }

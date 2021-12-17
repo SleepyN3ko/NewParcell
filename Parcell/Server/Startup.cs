@@ -1,4 +1,3 @@
-using CarRentalManagement.Server.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,9 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Parcell.Server.Data;
 using Parcell.Server.IRepository;
+using Parcell.Server.Repository;
 using Parcell.Server.Models;
 using Syncfusion.Blazor;
 using System.Linq;
+using CarRentalManagement.Server.Repository;
 
 namespace Parcell.Server
 {
@@ -47,8 +48,8 @@ namespace Parcell.Server
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddSyncfusionBlazor();
+            services.AddRazorPages(); 
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -48,7 +48,7 @@ namespace Parcell.Server.Areas.Identity.Pages.Account
         {
             [Required]
             [Display(Name = "Username")]
-            public string UserName { get; set; }
+            public string Username { get; set; }
 
             [Required]
             [EmailAddress]
@@ -79,7 +79,7 @@ namespace Parcell.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.UserName, Email = Input.Email };
+                var user = new ApplicationUser { UserName = Input.Username, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

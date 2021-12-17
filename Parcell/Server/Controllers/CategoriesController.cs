@@ -13,11 +13,11 @@ namespace Parcell.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
 
         private readonly IUnitOfWork _unitOfWork;
-        public ProductsController(IUnitOfWork unitOfWork)
+        public CategoriesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
 
@@ -25,42 +25,42 @@ namespace Parcell.Server.Controllers
 
 
 
-        // GET: api/Products
+        // GET: api/Categories
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetCategories()
         {
-            var products = await _unitOfWork.Products.GetAll();
-            return Ok(products);
+            var categories = await _unitOfWork.Categories.GetAll();
+            return Ok(categories);
         }
 
 
 
-        // GET: api/Products/5
+        // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProduct(int id)
+        public async Task<IActionResult> GetCategory(int id)
         {
-            var product = await _unitOfWork.Products.Get(q => q.Id == id);
+            var category = await _unitOfWork.Categories.Get(q => q.Id == id);
 
-            if (product == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(category);
         }
 
-        // PUT: api/Products/5
+        // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutCategory(int id, Category category)
         {
-            if (id != product.Id)
+            if (id != category.Id)
             {
                 return BadRequest();
             }
 
 
-            _unitOfWork.Products.Update(product);
+            _unitOfWork.Categories.Update(category);
             try
             {
 
@@ -69,7 +69,7 @@ namespace Parcell.Server.Controllers
             catch (DbUpdateConcurrencyException)
             {
 
-                if (!await ProductExists(id))
+                if (!await CategoryExists(id))
                 {
                     return NotFound();
                 }
@@ -82,41 +82,44 @@ namespace Parcell.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Products
+        // POST: api/Categories
 
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Category>> PostCategory(Category category)
         {
 
-            await _unitOfWork.Products.Insert(product);
+            await _unitOfWork.Categories.Insert(category);
             await _unitOfWork.Save(HttpContext);
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+
+
+            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
 
-        // DELETE: api/Products/5
+        // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            var product = await _unitOfWork.Products.Get(q => q.Id == id);
-            if (product == null)
+            var category = await _unitOfWork.Categories.Get(q => q.Id == id);
+            if (category == null)
             {
                 return NotFound();
             }
 
 
-            await _unitOfWork.Products.Delete(id);
+            await _unitOfWork.Categories.Delete(id);
             await _unitOfWork.Save(HttpContext);
 
             return NoContent();
         }
 
 
-        private async Task<bool> ProductExists(int id)
+
+        private async Task<bool> CategoryExists(int id)
         {
 
-            var product = await _unitOfWork.Products.Get(q => q.Id == id);
-            return product != null;
+            var category = await _unitOfWork.Categories.Get(q => q.Id == id);
+            return category != null;
         }
     }
 }

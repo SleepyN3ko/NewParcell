@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Parcell.Server.Data.Migrations
+namespace Parcell.Server.Migrations
 {
-    public partial class newstuff : Migration
+    public partial class addedCategoriesSeed : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
