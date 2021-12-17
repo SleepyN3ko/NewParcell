@@ -90,8 +90,6 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.Products.Insert(product);
             await _unitOfWork.Save(HttpContext);
-
-
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 

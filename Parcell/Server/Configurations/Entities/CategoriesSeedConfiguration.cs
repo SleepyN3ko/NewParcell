@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Parcell.Server.Configurations.Entities
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Product>
+    public class CategorySeedConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.HasData(
              new Category
@@ -25,7 +25,6 @@ namespace Parcell.Server.Configurations.Entities
                  Name = "Household",
                  Description = "Things you need to have in your house"
              },
-
             new Category
             {
                 Id = 3,
