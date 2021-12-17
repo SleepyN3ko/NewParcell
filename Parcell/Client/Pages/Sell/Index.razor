@@ -17,7 +17,8 @@
 
 else
 {
-    
+<AuthorizeView>
+
 
     <table class="table table-responsive">
         <thead>
@@ -36,34 +37,35 @@ else
             @foreach (var product in Products)
             {
                 count++;
-            <tr>
-                <td>@count</td>
-                <td>@product.Name</td>
-                <td>
-                    <ul>
-                        <li>Description = @product.Description</li>
-                        <li>Stock = @product.Stock</li>
-                        <li>Price = @product.Price</li>
+                <tr>
+                    <td>@count</td>
+                    <td>@product.Name</td>
+                    <td>
+                        <ul>
+                            <li>Description = @product.Description</li>
+                            <li>Stock = @product.Stock</li>
+                            <li>Price = @product.Price</li>
 
-                    </ul>
-                </td>
-                <td>@product.P_category</td>
-                <td><img style="width:100%;height:100%" src="@product.Image" /></td>
-                <td>@product.username</td>
-                <td>
-                    <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
-                        <span class="oi oi-pencil"></span>
-                    </a>
-                </td>
-                <td>
-                    <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
-                        <span class="oi oi-delete"></span>
-                    </button>
-                </td>
-            </tr>
+                        </ul>
+                    </td>
+                    <td>@product.P_category</td>
+                    <td><img style="width:80px;height:80px" src="@product.Image" /></td>
+                    <td>@product.username</td>
+                    <td>
+                        <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
+</AuthorizeView>
 }
 <button style="border-radius:20px;background-color:red;color:white;position:fixed;left:95%;top:90%;width:40px;height:40px;" onclick="location.href = 'add-products';">+</button>
 
@@ -76,6 +78,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        count = 0;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
 
     }

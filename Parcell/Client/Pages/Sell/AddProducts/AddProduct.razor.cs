@@ -12,7 +12,7 @@ using Parcell.Shared.Models;
 
 namespace Parcell.Client.Pages.Sell.AddProducts
 {
-    public class AddProductModalBase : ComponentBase
+    public partial class AddProductModalBase : ComponentBase
     {
         [Inject]
         HttpClient Http { get; set; }
@@ -26,7 +26,27 @@ namespace Parcell.Client.Pages.Sell.AddProducts
 
         protected bool isCreationSuccess = false;
 
-
+        public bool ShowDialog
+        {
+            get;
+            set;
+        }
+        [Parameter]
+        public EventCallback<bool> CloseEventCallback
+        {
+            get;
+            set;
+        }
+        public void Show()
+        {
+            ShowDialog = true;
+            StateHasChanged();
+        }
+        public void Close()
+        {
+            ShowDialog = false;
+            StateHasChanged();
+        }
         protected async Task AddProduct()
         {
             customFormValidator.ClearFormErrors();

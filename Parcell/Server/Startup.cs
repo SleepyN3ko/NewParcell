@@ -48,7 +48,7 @@ namespace Parcell.Server
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages(); 
             services.AddHttpContextAccessor();
         }
 
