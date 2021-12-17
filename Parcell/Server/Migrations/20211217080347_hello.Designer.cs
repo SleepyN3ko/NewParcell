@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211216092120_addMoreCategoriesSeed")]
-    partial class addMoreCategoriesSeed
+    [Migration("20211217080347_hello")]
+    partial class hello
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -367,6 +367,26 @@ namespace Parcell.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Other things you might want to get",
+                            Name = "Others"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Things you need to have in your house",
+                            Name = "Household"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Things you would have in an office",
+                            Name = "Office"
+                        });
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.Order", b =>

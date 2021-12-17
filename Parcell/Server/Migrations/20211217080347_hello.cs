@@ -2,7 +2,7 @@
 
 namespace Parcell.Server.Migrations
 {
-    public partial class addedCategoriesSeed : Migration
+    public partial class hello : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
