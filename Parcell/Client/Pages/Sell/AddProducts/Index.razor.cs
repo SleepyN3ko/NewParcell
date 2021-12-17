@@ -31,8 +31,6 @@ namespace Parcell.Client.Pages.Sell.AddProducts
         {
             customFormValidator.ClearFormErrors();
             isCreationSuccess = false;
-
-            Console.WriteLine("Checking product details");
             try
             {
                 var response = await Http.PostAsJsonAsync("api/products", newproduct);
@@ -47,8 +45,6 @@ namespace Parcell.Client.Pages.Sell.AddProducts
                 {
                     isCreationSuccess = true;
                     Logger.LogInformation("The product creation is successful");
-                    Console.WriteLine("Product has been created");
-
                 }
 
             }

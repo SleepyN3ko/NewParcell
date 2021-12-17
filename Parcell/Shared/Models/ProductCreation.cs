@@ -4,16 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-
 namespace Parcell.Shared.Models
 {
     public class ProductCreation
     {
 
 
-        [Required]
-        [Display(Name="Username")]
-        public string Username { get; set; }
+        
+        [Display(Name="username")]
+        public string username { get; set; }
 
         [Required]
         [Display(Name = "Name")]
@@ -22,6 +21,9 @@ namespace Parcell.Shared.Models
         [Required]
         [Display(Name ="Description")]
         public string Description { get; set; }
+
+        [Display(Name="Image")]
+        public string Image { get; set; }
 
         [Required]
         [Display(Name = "Stock")]

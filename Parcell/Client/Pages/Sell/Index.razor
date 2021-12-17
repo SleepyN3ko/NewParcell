@@ -26,6 +26,8 @@ else
                 <th>Name</th>
                 <th>Details</th>
                 <th>Category</th>
+                <th>Picture</th>
+                <th>From</th> @*should be removed after being developed*@
                 <th>Edit product</th>
                 <th>Delete product</th>
             </tr>
@@ -42,11 +44,14 @@ else
                         <li>Description = @product.Description</li>
                         <li>Stock = @product.Stock</li>
                         <li>Price = @product.Price</li>
+
                     </ul>
                 </td>
                 <td>@product.P_category</td>
+                <td><img style="width:100%;height:100%" src="@product.Image" /></td>
+                <td>@product.username</td>
                 <td>
-                    <a href="/products/edit/@product.Id" class="btn btn-warning">
+                    <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
                         <span class="oi oi-pencil"></span>
                     </a>
                 </td>
