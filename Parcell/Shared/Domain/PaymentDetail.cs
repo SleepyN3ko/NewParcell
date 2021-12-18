@@ -10,7 +10,7 @@ namespace Parcell.Shared.Domain
     {
         public int Id { get; set; }
         public int TotalPrice { get; set; }
-        public string username { get; set; }
+        public string Username { get; set; }
 
     }
 }
