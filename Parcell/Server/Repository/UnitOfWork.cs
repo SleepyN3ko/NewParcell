@@ -24,7 +24,7 @@ namespace CarRentalManagement.Server.Repository
         private IGenericRepository<Product> _products;
         private IGenericRepository<ProductCategory> _productcategories;
         private IGenericRepository<Swap> _swaps;
-        private IGenericRepository<SwapProduct> _swapproducts;
+        private IGenericRepository<SwapCategory> _swapcategories;
         private IGenericRepository<WishList> _wishlists;
         private IGenericRepository<WishListItem> _wishlistitems;
 
@@ -52,8 +52,8 @@ namespace CarRentalManagement.Server.Repository
             => _productcategories ??= new GenericRepository<ProductCategory>(_context);
         public IGenericRepository<Swap> Swaps
             => _swaps ??= new GenericRepository<Swap>(_context);
-        public IGenericRepository<SwapProduct> SwapProducts
-            => _swapproducts ??= new GenericRepository<SwapProduct>(_context);
+        public IGenericRepository<SwapCategory> SwapCategories
+            => _swapcategories ??= new GenericRepository<SwapCategory>(_context);
         public IGenericRepository<WishList> WishLists
             => _wishlists ??= new GenericRepository<WishList>(_context);
         public IGenericRepository<WishListItem> WishListItems
