@@ -26,7 +26,7 @@ namespace Parcell.Server.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Swap> Swaps { get; set; }
-        public DbSet<SwapProduct> SwapProducts { get; set; }
+        public DbSet<SwapCategory> SwapCategories { get; set; }
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<WishListItem> WishListItems { get; set; }
 
