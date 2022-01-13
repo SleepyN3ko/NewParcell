@@ -1,4 +1,4 @@
-﻿@page "/sell"
+﻿@page "/products"
 @inject HttpClient _client
 @inject IJSRuntime js
 @attribute [Authorize]
@@ -18,56 +18,56 @@
 else
 {
 <AuthorizeView>
-
-
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>Product no</th>
-                <th>Name</th>
-                <th>Details</th>
-                <th>Category</th>
-                <th>Picture</th>
-                <th>From</th> @*should be removed after being developed*@
-                <th>Edit product</th>
-                <th>Delete product</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Products)
-            {
-                count++;
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@count</td>
-                    <td>@product.Name</td>
-                    <td>
-                        <ul>
-                            <li>Description = @product.Description</li>
-                            <li>Stock = @product.Stock</li>
-                            <li>Price = @product.Price</li>
-
-                        </ul>
-                    </td>
-                    <td>@product.P_category</td>
-                    <td><img style="width:80px;height:80px" src="@product.Image" /></td>
-                    <td>@product.username</td>
-                    <td>
-                        <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
-                            <span class="oi oi-pencil"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
-                            <span class="oi oi-delete"></span>
-                        </button>
-                    </td>
+                    <th>Product no</th>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Category</th>
+                    <th>Picture</th>
+                    <th>From</th> @*should be removed after being developed*@
+                    <th>Edit product</th>
+                    <th>Delete product</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var product in Products)
+                {
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@product.Name</td>
+                        <td>
+                            <ul>
+                                <li>Description = @product.Description</li>
+                                <li>Stock = @product.Stock</li>
+                                <li>Price = @product.Price</li>
+
+                            </ul>
+                        </td>
+                        <td>@product.P_category</td>
+                        <td><img style="width:80px;height:80px" src="@product.Image" /></td>
+                        <td>@product.Username</td>
+                        <td>
+                            <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
+                                <span class="oi oi-pencil"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
+                                <span class="oi oi-delete"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </AuthorizeView>
 }
-<button style="border-radius:20px;background-color:red;color:white;position:fixed;left:95%;top:90%;width:40px;height:40px;" onclick="location.href = 'add-products';">+</button>
+<button style="border-radius:20px;background-color:red;color:white;position:fixed;left:95%;top:90%;width:40px;height:40px;" onclick="location.href = '/products/create';">+</button>
 
 
 

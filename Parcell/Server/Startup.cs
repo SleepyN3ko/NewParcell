@@ -14,6 +14,8 @@ using Parcell.Server.Models;
 using Syncfusion.Blazor;
 using System.Linq;
 using CarRentalManagement.Server.Repository;
+using Parcell.Client.Components;
+
 
 namespace Parcell.Server
 {
@@ -47,7 +49,8 @@ namespace Parcell.Server
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages(); 
             services.AddHttpContextAccessor();
         }

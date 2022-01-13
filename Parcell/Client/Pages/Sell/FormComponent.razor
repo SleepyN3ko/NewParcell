@@ -1,0 +1,76 @@
+﻿@inject HttpClient _client
+@using Parcell.Client.Components
+
+<EditForm Model="@product" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <AuthorizeView Context="getName">
+        @{ product.Username = @getName.User.Identity.Name;}
+    </AuthorizeView>
+    <div class="form-group">
+        <label>Product Name</label>
+        <div>
+            <InputText @bind-Value="product.Name" class="form-control" />
+            <ValidationMessage For="@(()=>product.Name)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Link to Image</label>
+        <div>
+            <InputText @bind-Value="product.Image" class="form-control" />
+            <ValidationMessage For="@(()=>product.Image)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <div>
+            <InputText @bind-Value="product.Description" class="form-control" />
+            <ValidationMessage For="@(()=>product.Description)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Stock</label>
+        <div>
+            <InputNumber @bind-Value="product.Stock" class="form-control" />
+            <ValidationMessage For="@(()=>product.Stock)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Price</label>
+        <div>
+            <InputNumber @bind-Value="product.Price" class="form-control" />
+            <ValidationMessage For="@(()=>product.Price)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Category</label>
+        <div>
+            <InputSelect @bind-Value="product.P_category" class="form-control">
+                <option value="">--Select Category--</option>
+                @if (Categories != null)
+                {
+                    foreach (var category in Categories)
+                    {
+                        <option value="@category.Name">@category.Name</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=>product.P_category)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success btn-block">
+        @ButtonText
+    </button>
+</EditForm>
+<BackToList Target="products"/>
+@code {
+    [Parameter] public Product product { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private IList<Category> Categories;
+    protected async override Task OnInitializedAsync()
+    {
+        Categories = await _client.GetFromJsonAsync<List<Category>>($"{Endpoints.CategoriesEndpoint}");
+    }
+}
