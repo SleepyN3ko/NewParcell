@@ -38,7 +38,7 @@
             </ul>
             <AuthorizeView>
                 <Authorized>
-                    <a class="nav-link text-light" href="authentication/profile"><span class="oi oi-person"/> @context.User.Identity.Name!</a>
+                    <a class="nav-link text-light" href="authentication/profile"><span class="oi oi-person"/> @context.User.Identity.Name</a>
                     <a class="nav-link btn btn-link text-light" @onclick="BeginSignOut"><span class="oi oi-account-logout"/>Log out</a>
                 </Authorized>
                 <NotAuthorized>
