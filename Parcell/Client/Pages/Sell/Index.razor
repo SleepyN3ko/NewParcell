@@ -22,12 +22,10 @@ else
         <table class="table">
             <thead>
                 <tr>
-                    <th>Product no</th>
                     <th>Name</th>
                     <th>Details</th>
                     <th>Category</th>
                     <th>Picture</th>
-                    <th>From</th> @*should be removed after being developed*@
                     <th>Edit product</th>
                     <th>Delete product</th>
                 </tr>
@@ -35,9 +33,7 @@ else
             <tbody>
                 @foreach (var product in Products)
                 {
-                    count++;
                     <tr>
-                        <td>@count</td>
                         <td>@product.Name</td>
                         <td>
                             <ul>
@@ -48,8 +44,7 @@ else
                             </ul>
                         </td>
                         <td>@product.P_category</td>
-                        <td><img style="width:80px;height:80px" src="@product.Image" /></td>
-                        <td>@product.Username</td>
+                        <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image"/></td>
                         <td>
                             <a href="/products/edit/@product.Id" class="btn btn-warning" alt="No image found">
                                 <span class="oi oi-pencil"></span>
@@ -78,7 +73,6 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        count = 0;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
 
     }

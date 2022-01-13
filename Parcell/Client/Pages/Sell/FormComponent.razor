@@ -3,7 +3,6 @@
 
 <EditForm Model="@product" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
     <AuthorizeView Context="getName">
         @{ product.Username = @getName.User.Identity.Name;}
     </AuthorizeView>
