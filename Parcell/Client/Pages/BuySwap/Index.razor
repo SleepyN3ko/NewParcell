@@ -1,5 +1,101 @@
 ﻿@page "/buyswap"
-<h3>Buy and Swap Goods HERE</h3>
-@code {
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
 
+
+
+
+
+
+@if (Products == null)
+{
+    <div class="alert alert-info">Loading Products...</div>
+}
+
+
+else
+{
+    <AuthorizeView Context="getName">
+        <Authorized>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Details</th>
+                            <th>Category</th>
+                            <th>Picture</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Products)
+                        {
+                            @if (product.Username != getName.User.Identity.Name)
+                            {
+
+                                <tr>
+                                    <td><a href="/buyswap/view/@product.Id">@product.Name</a></td>
+                                    <td>
+                                        <ul>
+                                            <li>Description = @product.Description</li>
+                                            <li>Stock = @product.Stock</li>
+                                            <li>Price = @product.Price</li>
+
+                                        </ul>
+                                    </td>
+                                    <td>@product.P_category</td>
+                                    <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" /></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Details</th>
+                            <th>Category</th>
+                            <th>Picture</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Products)
+                        {
+                            <tr>
+                                <td>@product.Name</td>
+                                <td>
+                                    <ul>
+                                        <li>Description = @product.Description</li>
+                                        <li>Stock = @product.Stock</li>
+                                        <li>Price = @product.Price</li>
+                                    </ul>
+                                </td>
+                                <td>@product.P_category</td>
+                                <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+
+
+@code {
+    public int count;
+
+    private List<Product> Products;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+    }
 }
