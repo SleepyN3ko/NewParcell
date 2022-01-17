@@ -4,46 +4,37 @@
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-<style>
-    .nav-link > hr {
-        visibility:hidden;
-        color: white;
-        height:2px;
-        margin-top:4px;
-        margin-bottom: 0px;
-    }
-    .nav-item .nav-link.actiive > hr {
-        visibility:visible;
-        filter: blur(1.5px);
-    }
-</style>
+
+
+
+
 <div class="page">
     <div class="main">
-        <div class="container-fluid top-row px-4 auth bg-dark">
+        <div class="top-row px-4 auth bg-dark">
             <a style="position:fixed;top:4px; left:0;" href=""><img src="Parcell2.ico" width=90></a>
             <ul class="nav flex-row">
                 <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="/buyswap" style="display:inline" Match="NavLinkMatch.All">
+                    <NavLink class="nav-link text-light"  href="buyswap" style="display:inline">
                         <span class="oi oi-dollar" aria-hidden="true"></span> Buy/Swap
                     </NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="/products" style="display:inline" Match="NavLinkMatch.All">
+                    <NavLink  class="nav-link text-light" href="products" style="display:inline">
                         <span class="oi oi-dollar" aria-hidden="true"></span> Sell
                     </NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="/wishlist" style="display:inline" Match="NavLinkMatch.All">
+                    <NavLink class="nav-link text-light" href="wishlist" style="display:inline">
                         <span class="oi oi-star" aria-hidden="true"></span> Wishlist
                     </NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="/myswap" style="display:inline" Match="NavLinkMatch.All">
+                    <NavLink class="nav-link text-light" href="myswap" style="display:inline">
                         <span class="oi oi-cart" aria-hidden="true"></span> My Swap
                     </NavLink>
                 </li>
                 <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="/mycart" style="display:inline" Match="NavLinkMatch.All">
+                    <NavLink class="nav-link text-light" href="mycart" style="display:inline">
                         <span class="oi oi-cart" aria-hidden="true"></span> My Cart
                     </NavLink>
                 </li>
@@ -74,4 +65,18 @@
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
+
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    protected override void OnInitialized() => NavigationManager.LocationChanged += (s, e) => StateHasChanged();
+
+    bool IsActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix)
+    {
+        var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLower();
+        return navLinkMatch == NavLinkMatch.All ? relativePath == href.ToLower() : relativePath.StartsWith(href.ToLower());
+    }
+
+    string GetActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix) => IsActive(href, navLinkMatch) ? "active" : "";
 }
