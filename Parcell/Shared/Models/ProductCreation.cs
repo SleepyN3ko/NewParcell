@@ -10,7 +10,7 @@ namespace Parcell.Shared.Models
     {
 
 
-        
+        [Required]
         [Display(Name="username")]
         public string username { get; set; }
 
