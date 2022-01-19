@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211217080347_hello")]
-    partial class hello
+    [Migration("20220118075139_newDB")]
+    partial class newDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -411,7 +411,7 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -438,7 +438,7 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -460,7 +460,7 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("TotalPrice")
                         .HasColumnType("int");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -476,15 +476,19 @@ namespace Parcell.Server.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("P_category")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
@@ -499,7 +503,7 @@ namespace Parcell.Server.Migrations
                     b.Property<string>("Thumbnail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -568,17 +572,11 @@ namespace Parcell.Server.Migrations
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Pusername")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("SProductId")
                         .HasColumnType("int");
 
                     b.Property<bool>("SStatus")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Susername")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -589,14 +587,17 @@ namespace Parcell.Server.Migrations
                     b.ToTable("Swaps");
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.SwapProduct", b =>
+            modelBuilder.Entity("Parcell.Shared.Domain.SwapCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description")
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProductId")
@@ -605,11 +606,16 @@ namespace Parcell.Server.Migrations
                     b.Property<bool>("Request")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("SwapProducts");
+                    b.ToTable("SwapCategories");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishList", b =>
@@ -622,12 +628,20 @@ namespace Parcell.Server.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("WishLists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "seedUser"
+                        });
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishListItem", b =>
@@ -656,6 +670,14 @@ namespace Parcell.Server.Migrations
                     b.HasIndex("WistlistId");
 
                     b.ToTable("WishListItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = false
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -754,11 +776,17 @@ namespace Parcell.Server.Migrations
                     b.Navigation("SProduct");
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.SwapProduct", b =>
+            modelBuilder.Entity("Parcell.Shared.Domain.SwapCategory", b =>
                 {
+                    b.HasOne("Parcell.Shared.Domain.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
                     b.HasOne("Parcell.Shared.Domain.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Product");
                 });

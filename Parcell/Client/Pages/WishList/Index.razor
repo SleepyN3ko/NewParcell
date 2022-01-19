@@ -1,5 +1,120 @@
 ﻿@page "/wishlist"
-<h3>Here are the goods in your wishlist</h3>
-@code {
 
+@inject HttpClient _client
+@inject IJSRuntime js
+@inject NavigationManager _navManager
+@attribute [Authorize]
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (wishlistitems == null)
+{
+    <div class="alert alert-info">Nothing found in your wishlist</div>
+}
+else
+{
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Category</th>
+                    <th>Picture</th>
+                    <th>View product</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var wishitem in wishlistitems)
+                {
+                    @if (currentwishlist.Id == wishitem.Wishlist_id)
+                    {
+                        currentproduct = Products.First(q => q.Id == wishitem.Product_id);
+                        <tr>
+                            <td>@currentproduct.Name</td>
+                            <td>
+                                <ul>
+                                    <li>Description = >@currentproduct.Description</li>
+                                    <li>Stock = >@currentproduct.Stock</li>
+                                    <li>Price = >@currentproduct.Price</li>
+
+                                </ul>
+                            </td>
+                            <td>@currentproduct.P_category</td>
+                            <td>
+                                <img style="width:80px;height:80px" src="@currentproduct.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                            </td>
+                            <td>
+                                <a href="/buyswap/view/>@currentproduct.Id" class="btn btn-info">
+                                    <span class="oi oi-book"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromWishList(wishitem.Id))">
+                                    <span class="oi oi-delete"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+@code {
+    private List<Product> Products;
+    private List<WishList> wishlists;
+    private List<WishListItem> wishlistitems;
+    private WishList currentwishlist;
+    private WishList addNewWishList = new WishList();
+    public string username;
+    public Product currentproduct;
+    private int currentUserWishListId;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+        currentUserWishListId = -69;
+        foreach (WishList wishlist in wishlists)
+        {
+            if (wishlist.Username == username)
+            {
+                currentUserWishListId = wishlist.Id;
+                currentwishlist = wishlist;
+            }
+        }
+        @*Create a new wishlist if the user had not yet created their wishlist*@
+        if (currentUserWishListId == -69)
+        {
+            addNewWishList.Username = username;
+            await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
+            wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+            foreach (WishList wishlist in wishlists)
+            {
+                if (wishlist.Username == username)
+                {
+                    currentwishlist = wishlist;
+                }
+            }
+        }
+        wishlistitems = await _client.GetFromJsonAsync<List<WishListItem>>($"{Endpoints.WishListItemEndpoint}");
+    }
+
+    async Task RemoveFromWishList(int wishitemid)
+    {
+        var wishitem = wishlistitems.First(q => q.Id == wishitemid);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {wishitem.Product.Name}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.WishListItemEndpoint}/{wishitem.Id}");
+            await OnInitializedAsync();
+        }
+    }
 }

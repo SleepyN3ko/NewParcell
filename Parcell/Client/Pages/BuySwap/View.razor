@@ -10,7 +10,7 @@
             <div class="panel-body">
                 <div class="col-md-12">
                     <div class="pro-img-details">
-                        <img src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" />
+                        <img src="@product.Image" onerror="this.onerror = null;this.src='missingImage.png'" alt="Missing Image" />
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -33,6 +33,18 @@
                     <p>
                         <button class="btn btn-round btn-danger" type="button"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
                     </p>
+                    <p>
+                        <button class="btn btn-round btn-info" type="button" @onclick="AddToWishList"><span class="oi oi-star" />Add to wishlist</button>
+                    </p>
+                    <AuthorizeView Context="getName">
+                        @{ username = getName.User.Identity.Name;}
+                    </AuthorizeView>
+                    @*@if (getusername == true)
+                    {
+                        <AuthorizeView Context="getName">
+                            @{ username = getName.User.Identity.Name;}
+                        </AuthorizeView>
+                    }*@
                 </div>
             </div>
         </section>
@@ -42,10 +54,58 @@
 @code {
     [Parameter] public int id { get; set; }
     Product product = new Product();
+    WishListItem wishlistitem = new WishListItem();
+
+    public bool getusername = false;
+    public string username;
+    public int currentUserWishListId;
+    private List<WishList> wishlists;
+    private WishList addNewWishList = new WishList();
+    private WishList currentWishList;
+
     protected async override Task OnParametersSetAsync()
     {
         product = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{id}");
+        wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+    }
 
+    private async Task AddToWishList()
+    {
+        currentUserWishListId = -69;
+        foreach (WishList wishlist in wishlists) {
+            if (wishlist.Username == username)
+            {
+                currentUserWishListId = wishlist.Id;
+                currentWishList = wishlist;
+                Console.WriteLine("user has been found");
+                break;
+            }
+        }
+        if (currentUserWishListId == -69)
+        {
+            addNewWishList.Username = username;
+            await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
+            //var response = await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
+            //currentUserWishListId = response.;
+
+            wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+            foreach (WishList wishlist in wishlists)
+            {
+                if (wishlist.Username == username)
+                {
+                    currentUserWishListId = wishlist.Id;
+                    currentWishList = wishlist;
+                    Console.WriteLine("user wishlist has been added");
+                    break;
+                }
+            }
+        }
+
+        wishlistitem.Product_id = product.Id;
+        wishlistitem.Date = DateTime.Now;
+        wishlistitem.Wishlist_id = currentWishList.Id;
+        await _client.PostAsJsonAsync(Endpoints.WishListItemEndpoint, wishlistitem);
+        Console.WriteLine("posted");
     }
     //https://www.bootdey.com/snippets/view/shop-product-detail#html
 }
