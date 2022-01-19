@@ -37,6 +37,8 @@ namespace Parcell.Server.Data
 
             builder.ApplyConfiguration(new ProductSeedConfiguration());
             builder.ApplyConfiguration(new CategorySeedConfiguration());
+            builder.ApplyConfiguration(new WishListItemSeedConfiguration());
+            builder.ApplyConfiguration(new WishListSeedConfiguration());
         }
 
 

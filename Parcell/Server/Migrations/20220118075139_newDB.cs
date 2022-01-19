@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class getdatabase : Migration
+    public partial class newDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -146,13 +146,13 @@ namespace Parcell.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
                     Thumbnail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: false),
-                    P_category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    P_category = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Swap_description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -441,6 +441,16 @@ namespace Parcell.Server.Migrations
                     { 1, "Green water bottle that has totally not been used before", null, "Water Bottle", "Household", 100, 1, null, null, null },
                     { 2, "Green file that has nothing in it", null, "File", "Office", 10, 10, null, null, null }
                 });
+
+            migrationBuilder.InsertData(
+                table: "WishListItems",
+                columns: new[] { "Id", "Date", "ProductId", "Status", "WistlistId" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null });
+
+            migrationBuilder.InsertData(
+                table: "WishLists",
+                columns: new[] { "Id", "Date", "Username" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "seedUser" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

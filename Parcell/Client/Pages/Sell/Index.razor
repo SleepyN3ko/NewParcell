@@ -26,6 +26,7 @@ else
                     <th>Details</th>
                     <th>Category</th>
                     <th>Picture</th>
+                    <th>View product</th>
                     <th>Edit product</th>
                     <th>Delete product</th>
                 </tr>
@@ -36,29 +37,36 @@ else
                     @if (product.Username == getName.User.Identity.Name)
                     {
 
-                        <tr>
-                            <td>@product.Name</td>
-                            <td>
-                                <ul>
-                                    <li>Description = @product.Description</li>
-                                    <li>Stock = @product.Stock</li>
-                                    <li>Price = @product.Price</li>
+                <tr>
+                    <td>@product.Name</td>
+                    <td>
+                        <ul>
+                            <li>Description = @product.Description</li>
+                            <li>Stock = @product.Stock</li>
+                            <li>Price = @product.Price</li>
 
-                                </ul>
-                            </td>
-                            <td>@product.P_category</td>
-                            <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" /></td>
-                            <td>
-                                <a href="/products/edit/@product.Id" class="btn btn-warning">
-                                    <span class="oi oi-pencil"></span>
-                                </a>
-                            </td>
-                            <td>
-                                <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
-                                    <span class="oi oi-delete"></span>
-                                </button>
-                            </td>
-                        </tr>
+                        </ul>
+                    </td>
+                    <td>@product.P_category</td>
+                    <td>
+                    <img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/css/missingImage.png'" alt="Missing Image" />
+                    </td>
+                    <td>
+                        <a href="/buyswap/view/@product.Id" class="btn btn-info">
+                            <span class="oi oi-book"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/products/edit/@product.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
                     }
                 }
             </tbody>

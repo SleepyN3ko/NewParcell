@@ -474,15 +474,19 @@ namespace Parcell.Server.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("P_category")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
@@ -628,6 +632,14 @@ namespace Parcell.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WishLists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "seedUser"
+                        });
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishListItem", b =>
@@ -643,8 +655,14 @@ namespace Parcell.Server.Migrations
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Product_id")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Wishlist_id")
+                        .HasColumnType("int");
 
                     b.Property<int?>("WistlistId")
                         .HasColumnType("int");
@@ -656,6 +674,16 @@ namespace Parcell.Server.Migrations
                     b.HasIndex("WistlistId");
 
                     b.ToTable("WishListItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Product_id = 0,
+                            Status = false,
+                            Wishlist_id = 0
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
