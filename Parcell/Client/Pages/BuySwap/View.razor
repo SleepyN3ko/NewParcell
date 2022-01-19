@@ -84,21 +84,21 @@
         if (currentUserWishListId == -69)
         {
             addNewWishList.Username = username;
-            await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
-            //var response = await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
-            //currentUserWishListId = response.;
+            var response = await _client.PostAsJsonAsync(Endpoints.WishListEndpoint, addNewWishList);
+            string location = response.Headers.Location.AbsoluteUri;
 
-            wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
-            foreach (WishList wishlist in wishlists)
-            {
-                if (wishlist.Username == username)
-                {
-                    currentUserWishListId = wishlist.Id;
-                    currentWishList = wishlist;
-                    Console.WriteLine("user wishlist has been added");
-                    break;
-                }
-            }
+            currentWishList = await _client.GetFromJsonAsync<WishList>($"{location}");
+            //wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+            //foreach (WishList wishlist in wishlists)
+            //{
+            //    if (wishlist.Username == username)
+            //    {
+            //        currentUserWishListId = wishlist.Id;
+            //        currentWishList = wishlist;
+            //        Console.WriteLine("user wishlist has been added");
+            //        break;
+            //    }
+            //}
         }
 
         wishlistitem.Product_id = product.Id;

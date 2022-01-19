@@ -47,12 +47,12 @@ else
                                 <img style="width:80px;height:80px" src="@currentproduct.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
                             </td>
                             <td>
-                                <a href="/buyswap/view/>@currentproduct.Id" class="btn btn-info">
+                                <a href="/buyswap/view/@currentproduct.Id" class="btn btn-info">
                                     <span class="oi oi-book"></span>
                                 </a>
                             </td>
                             <td>
-                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromWishList(wishitem.Id))">
+                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromWishList(wishitem.Id,currentproduct.Name))">
                                     <span class="oi oi-delete"></span>
                                 </button>
                             </td>
@@ -106,14 +106,14 @@ else
         wishlistitems = await _client.GetFromJsonAsync<List<WishListItem>>($"{Endpoints.WishListItemEndpoint}");
     }
 
-    async Task RemoveFromWishList(int wishitemid)
+    async Task RemoveFromWishList(int wishitemid, string productName)
     {
         var wishitem = wishlistitems.First(q => q.Id == wishitemid);
-
-        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {wishitem.Product.Name}?");
+        
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {productName}?");
         if (confirm)
         {
-            await _client.DeleteAsync($"{Endpoints.WishListItemEndpoint}/{wishitem.Id}");
+            await _client.DeleteAsync($"{Endpoints.WishListItemEndpoint}/{wishitemid}");
             await OnInitializedAsync();
         }
     }

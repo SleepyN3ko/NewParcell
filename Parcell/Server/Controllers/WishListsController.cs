@@ -90,7 +90,8 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.WishLists.Insert(wishList);
             await _unitOfWork.Save(HttpContext);
-            return CreatedAtAction("GetWishList", new { id = wishList.Id }, wishList);
+            //return CreatedAtAction("GetWishList", new { id = wishList.Id }, wishList);
+            return CreatedAtAction(nameof(GetWishList), new { id = wishList.Id }, wishList);
         }
 
 
