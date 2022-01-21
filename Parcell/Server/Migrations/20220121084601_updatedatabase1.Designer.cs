@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220118084605_stuff")]
-    partial class stuff
+    [Migration("20220121084601_updatedatabase1")]
+    partial class updatedatabase1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -494,6 +494,10 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<string>("S_Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -518,6 +522,7 @@ namespace Parcell.Server.Migrations
                             Name = "Water Bottle",
                             P_category = "Household",
                             Price = 100,
+                            S_Category = "noswap",
                             Stock = 1
                         },
                         new
@@ -527,6 +532,7 @@ namespace Parcell.Server.Migrations
                             Name = "File",
                             P_category = "Office",
                             Price = 10,
+                            S_Category = "Office",
                             Stock = 10
                         });
                 });
@@ -569,14 +575,26 @@ namespace Parcell.Server.Migrations
                     b.Property<int?>("PProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PProduct_id")
+                        .HasColumnType("int");
+
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
+
+                    b.Property<string>("P_username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("SProduct_id")
+                        .HasColumnType("int");
+
                     b.Property<bool>("SStatus")
                         .HasColumnType("bit");
+
+                    b.Property<string>("S_username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -602,12 +620,6 @@ namespace Parcell.Server.Migrations
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Request")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

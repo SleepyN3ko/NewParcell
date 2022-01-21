@@ -1,5 +1,55 @@
 ﻿@page "/myswap"
-<h3>Here are the goods you are swapping</h3>
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+
+@if (swaps == null)
+{
+    <div class="alert alert-info">Loading Swaps...</div>
+}
+
+
+else
+{
+    <AuthorizeView Context="getName">
+        <Authorized>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Swap Owner</th>
+                            <th>Product Owner</th>
+                            <th>Swap Item</th>
+                            <th>Product Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var swap in swaps)
+                        {
+                            @if (swap.S_username != getName.User.Identity.Name || swap.P_username != getName.User.Identity.Name)
+                            {
+                                <tr>
+                                    <td>@swap.S_username</td>
+                                    <td>@swap.P_username</td>
+                                    <td>@swap.SProduct_id</td>
+                                    <td>@swap.PProduct_id</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+}
+
 @code {
 
+    private List<Swap> swaps;
+
+    protected async override Task OnInitializedAsync()
+    {
+        swaps = await _client.GetFromJsonAsync<List<Swap>>($"{Endpoints.SwapsEndpoint}");
+    }
 }

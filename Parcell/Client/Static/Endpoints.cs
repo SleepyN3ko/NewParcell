@@ -12,5 +12,7 @@ namespace Parcell.Client.Static
         public static readonly string CategoriesEndpoint = $"{Prefix}/categories";
         public static readonly string WishListEndpoint = $"{Prefix}/wishlists";
         public static readonly string WishListItemEndpoint = $"{Prefix}/wishlistitems";
+        public static readonly string SwapsEndpoint = $"{Prefix}/swaps";
+
     }
 }

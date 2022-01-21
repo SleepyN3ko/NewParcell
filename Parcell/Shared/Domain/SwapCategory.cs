@@ -9,18 +9,8 @@ namespace Parcell.Shared.Domain
     public class SwapCategory
     {
         public int Id { get; set; }
-
-        public Boolean Request { get; set; }
-
         public string Name { get; set; }
-
-
-
         public virtual Product Product { get; set; }
         public virtual Category Category { get; set; }
-
-        public string Username { get; set; }
-
-
     }
 }

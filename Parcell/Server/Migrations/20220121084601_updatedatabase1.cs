@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class newDB : Migration
+    public partial class updatedatabase1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -153,6 +153,7 @@ namespace Parcell.Server.Migrations
                     Thumbnail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: false),
                     P_category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    S_Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Swap_description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -342,11 +343,9 @@ namespace Parcell.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Request = table.Column<bool>(type: "bit", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -375,7 +374,11 @@ namespace Parcell.Server.Migrations
                     PStatus = table.Column<bool>(type: "bit", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deadline = table.Column<int>(type: "int", nullable: false),
+                    S_username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SProduct_id = table.Column<int>(type: "int", nullable: false),
                     SProductId = table.Column<int>(type: "int", nullable: true),
+                    P_username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PProduct_id = table.Column<int>(type: "int", nullable: false),
                     PProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -403,7 +406,9 @@ namespace Parcell.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
+                    Product_id = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
+                    Wishlist_id = table.Column<int>(type: "int", nullable: false),
                     WistlistId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -435,17 +440,17 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Description", "Image", "Name", "P_category", "Price", "Stock", "Swap_description", "Thumbnail", "Username" },
+                columns: new[] { "Id", "Description", "Image", "Name", "P_category", "Price", "S_Category", "Stock", "Swap_description", "Thumbnail", "Username" },
                 values: new object[,]
                 {
-                    { 1, "Green water bottle that has totally not been used before", null, "Water Bottle", "Household", 100, 1, null, null, null },
-                    { 2, "Green file that has nothing in it", null, "File", "Office", 10, 10, null, null, null }
+                    { 1, "Green water bottle that has totally not been used before", null, "Water Bottle", "Household", 100, "noswap", 1, null, null, null },
+                    { 2, "Green file that has nothing in it", null, "File", "Office", 10, "Office", 10, null, null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "WishListItems",
-                columns: new[] { "Id", "Date", "ProductId", "Status", "WistlistId" },
-                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null });
+                columns: new[] { "Id", "Date", "ProductId", "Product_id", "Status", "Wishlist_id", "WistlistId" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false, 0, null });
 
             migrationBuilder.InsertData(
                 table: "WishLists",

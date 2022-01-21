@@ -57,6 +57,30 @@
             <ValidationMessage For="@(()=>product.P_category)" />
         </div>
     </div>
+    <div class="form-group">
+        <label>Swap Category</label>
+        <div>
+            <InputSelect @bind-Value="product.S_Category" class="form-control">
+                <option value="">--Select Category--</option>
+                <option value="noswap">No swap</option>
+                @if (Categories != null)
+                {
+                    foreach (var category in Categories)
+                    {
+                        <option value="@category.Name">@category.Name</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=>product.S_Category)" />
+        </div>
+        <div class="form-group">
+            <label>Swap Description</label>
+            <div>
+                <InputText @bind-Value="product.Swap_description" class="form-control" />
+                <ValidationMessage For="@(()=>product.Swap_description)" />
+            </div>
+        </div>
+    </div>
     <button type="submit" class="btn btn-success btn-block">
         @ButtonText
     </button>

@@ -1,6 +1,8 @@
 ﻿@page "/buyswap/view/{id:int}"
 @inject HttpClient _client
 @inject NavigationManager _navManager
+@using Parcell.Client.Components
+
 
 <body>
 
@@ -45,8 +47,12 @@
                                 <button class="btn btn-round btn-info" type="button" @onclick="AddToWishList"><span class="oi oi-star" />Add to wishlist</button>
                             </p>
                             <p>
-                                <button class="btn btn-round" style="background-color:greenyellow;color:white" type="button"><span class="oi oi-cart"></span> Add to Swap</button>
+                                <button class="btn btn-round" style="background-color:greenyellow;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-cart"></span> Add to Swap</button>
                             </p>
+                            @if (swapDialogOpen)
+                            {
+                                <ModalDialog swapdetails="@swapdetails" Title="Add Swap Product" s_Username="@username" product="@product" OnClose="@CloseSwapDialog" OnValidSubmit="@PostSwap" ButtonText="Send Swap Request"/>
+                            }
                         }
                     </div>
                 </div>
@@ -58,9 +64,11 @@
 @code {
     [Parameter] public int id { get; set; }
     Product product = new Product();
+    Swap swapdetails = new Swap();
     WishListItem wishlistitem = new WishListItem();
 
     public bool getusername = false;
+    public bool swapDialogOpen { get; set; }
     public string username;
     public int currentUserWishListId;
     private List<WishList> wishlists;
@@ -112,4 +120,22 @@
         Console.WriteLine("posted");
     }
     //https://www.bootdey.com/snippets/view/shop-product-detail#html
+
+    private async Task CloseSwapDialog(bool accepted)
+    {
+        swapDialogOpen = false;
+        StateHasChanged();
+    }
+    private void OpenSwapDialog()
+    {
+        swapDialogOpen = true;
+        StateHasChanged();
+    }
+
+    async Task PostSwap()
+    {
+        await _client.PostAsJsonAsync($"{Endpoints.SwapsEndpoint}", swapdetails);
+        swapDialogOpen = false;
+        StateHasChanged();
+    }
 }

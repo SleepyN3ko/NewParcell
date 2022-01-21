@@ -20,7 +20,8 @@ namespace Parcell.Server.Configurations.Entities
                  Description = "Green water bottle that has totally not been used before",
                  Stock = 1,
                  Price = 100,
-                 P_category = "Household"
+                 P_category = "Household",
+                 S_Category = "noswap"
              },
 
             new Product
@@ -30,7 +31,8 @@ namespace Parcell.Server.Configurations.Entities
                 Description = "Green file that has nothing in it",
                 Stock = 10,
                 Price = 10,
-                P_category = "Office"
+                P_category = "Office",
+                S_Category = "Office"
             }
 
             );

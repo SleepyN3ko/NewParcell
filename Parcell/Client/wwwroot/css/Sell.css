@@ -119,7 +119,8 @@
 }
 
     .pro-img-details img {
-        height: 100%;
+        max-width:500px ;
+        max-height:1000px;
     }
 
 .pro-d-title {

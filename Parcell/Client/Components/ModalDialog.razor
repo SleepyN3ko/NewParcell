@@ -1,0 +1,93 @@
+﻿
+@inject HttpClient _client
+@attribute [Authorize]
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);"
+     aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Title</h4>
+                <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@swapdetails" OnValidSubmit="@OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="form-group">
+                        <label>Category</label>
+                        <div>
+                            <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
+                                <option value="">--Select Product--</option>
+                                @if (Products != null)
+                                {
+                                    foreach (var eachproduct in Products)
+                                    {
+                                        if (eachproduct.Username == s_Username)
+                                        {
+                                            <option value="@eachproduct.Id">@eachproduct.Name</option>
+                                        }
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(()=>swapdetails.SProduct_id)" />
+                            <button type="submit" class="btn btn-success btn-block">
+                                @ButtonText
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public Swap swapdetails { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    [Parameter]
+    public Product product { get; set; }
+
+    [Parameter]
+    public string s_Username { get; set; }
+
+    [Parameter]
+    public string ButtonText { get; set; }
+
+    private List<Product> Products;
+    Product sProduct = new Product();
+
+    protected async override Task OnInitializedAsync()
+    {
+        Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        swapdetails.SStatus = true;
+        swapdetails.PStatus = false;
+        swapdetails.Date = DateTime.Now;
+        swapdetails.S_username = s_Username;
+        swapdetails.P_username = product.Username;
+        swapdetails.PProduct_id = product.Id;
+
+    }
+
+    public bool DeleteDialogOpen { get; set; }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private Task ModalOk()
+    {
+        return OnClose.InvokeAsync(true);
+    }
+}

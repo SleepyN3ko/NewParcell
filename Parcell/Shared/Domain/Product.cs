@@ -27,6 +27,8 @@ namespace Parcell.Shared.Domain
         public int Price { get; set; }
         [Required]
         public string P_category { get; set; }
+        [Required]
+        public string S_Category { get; set; }
         public string Swap_description { get; set; }
 
         
