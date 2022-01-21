@@ -7,7 +7,7 @@
 
 
 
-<link rel="stylesheet" type="text/css" href="/css/Sell.css" />
+
 
 @if (Products == null)
 {
@@ -49,7 +49,7 @@ else
                     </td>
                     <td>@product.P_category</td>
                     <td>
-                    <img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/css/missingImage.png'" alt="Missing Image" />
+                    <img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
                     </td>
                     <td>
                         <a href="/buyswap/view/@product.Id" class="btn btn-info">
