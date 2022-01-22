@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class updatedatabase1 : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,6 +52,20 @@ namespace Parcell.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,7 +177,7 @@ namespace Parcell.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WishLists",
+                name: "WishList",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -173,7 +187,7 @@ namespace Parcell.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WishLists", x => x.Id);
+                    table.PrimaryKey("PK_WishList", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -280,6 +294,36 @@ namespace Parcell.Server.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Product_id = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: true),
+                    Cart_id = table.Column<int>(type: "int", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartItem_Cart_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Cart",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CartItem_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -399,7 +443,7 @@ namespace Parcell.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WishListItems",
+                name: "WishListItem",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -413,20 +457,30 @@ namespace Parcell.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WishListItems", x => x.Id);
+                    table.PrimaryKey("PK_WishListItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WishListItems_Products_ProductId",
+                        name: "FK_WishListItem_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_WishListItems_WishLists_WistlistId",
+                        name: "FK_WishListItem_WishList_WistlistId",
                         column: x => x.WistlistId,
-                        principalTable: "WishLists",
+                        principalTable: "WishList",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Cart",
+                columns: new[] { "Id", "Date", "Username" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "seedUser" });
+
+            migrationBuilder.InsertData(
+                table: "CartItem",
+                columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Status" },
+                values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false });
 
             migrationBuilder.InsertData(
                 table: "Categories",
@@ -448,14 +502,14 @@ namespace Parcell.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "WishListItems",
-                columns: new[] { "Id", "Date", "ProductId", "Product_id", "Status", "Wishlist_id", "WistlistId" },
-                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false, 0, null });
-
-            migrationBuilder.InsertData(
-                table: "WishLists",
+                table: "WishList",
                 columns: new[] { "Id", "Date", "Username" },
                 values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "seedUser" });
+
+            migrationBuilder.InsertData(
+                table: "WishListItem",
+                columns: new[] { "Id", "Date", "ProductId", "Product_id", "Status", "Wishlist_id", "WistlistId" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false, 0, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -495,6 +549,16 @@ namespace Parcell.Server.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartItem_CartId",
+                table: "CartItem",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartItem_ProductId",
+                table: "CartItem",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
@@ -563,13 +627,13 @@ namespace Parcell.Server.Migrations
                 column: "SProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WishListItems_ProductId",
-                table: "WishListItems",
+                name: "IX_WishListItem_ProductId",
+                table: "WishListItem",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WishListItems_WistlistId",
-                table: "WishListItems",
+                name: "IX_WishListItem_WistlistId",
+                table: "WishListItem",
                 column: "WistlistId");
         }
 
@@ -589,6 +653,9 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CartItem");
 
             migrationBuilder.DropTable(
                 name: "DeviceCodes");
@@ -612,13 +679,16 @@ namespace Parcell.Server.Migrations
                 name: "Swaps");
 
             migrationBuilder.DropTable(
-                name: "WishListItems");
+                name: "WishListItem");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "PaymentDetails");
@@ -630,7 +700,7 @@ namespace Parcell.Server.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "WishLists");
+                name: "WishList");
         }
     }
 }
