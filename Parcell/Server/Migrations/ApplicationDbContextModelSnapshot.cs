@@ -361,7 +361,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cart");
+                    b.ToTable("Carts");
 
                     b.HasData(
                         new
@@ -403,7 +403,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItem");
+                    b.ToTable("CartItems");
 
                     b.HasData(
                         new
@@ -713,7 +713,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WishList");
+                    b.ToTable("WishLists");
 
                     b.HasData(
                         new
@@ -755,7 +755,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasIndex("WistlistId");
 
-                    b.ToTable("WishListItem");
+                    b.ToTable("WishListItems");
 
                     b.HasData(
                         new

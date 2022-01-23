@@ -10,7 +10,7 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220122185942_test")]
+    [Migration("20220123050108_test")]
     partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -363,7 +363,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cart");
+                    b.ToTable("Carts");
 
                     b.HasData(
                         new
@@ -405,7 +405,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItem");
+                    b.ToTable("CartItems");
 
                     b.HasData(
                         new
@@ -715,7 +715,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WishList");
+                    b.ToTable("WishLists");
 
                     b.HasData(
                         new
@@ -757,7 +757,7 @@ namespace Parcell.Server.Migrations
 
                     b.HasIndex("WistlistId");
 
-                    b.ToTable("WishListItem");
+                    b.ToTable("WishListItems");
 
                     b.HasData(
                         new
