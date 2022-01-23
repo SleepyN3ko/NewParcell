@@ -21,6 +21,9 @@ namespace Parcell.Server.IRepository
         IGenericRepository<WishList> WishLists { get; }
         IGenericRepository<WishListItem> WishListItems { get; }
 
+        IGenericRepository<Cart> Carts { get; }
+        IGenericRepository<CartItem> CartItems { get; }
+
 
     }
 }

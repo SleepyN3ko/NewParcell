@@ -1,5 +1,120 @@
 ﻿@page "/mycart"
-<h3>Here is your shopping cart</h3>
-@code {
 
+@inject HttpClient _client
+@inject IJSRuntime js
+@inject NavigationManager _navManager
+@attribute [Authorize]
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (cartitems == null)
+{
+    <div class="alert alert-info">Loading your cart</div>
+}
+else
+{
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Category</th>
+                    <th>Picture</th>
+                    <th>View product</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cartitem in cartitems)
+                {
+                    @if (currentcart.Id == cartitem.Cart_id)
+                    {
+                        currentproduct = Products.First(q => q.Id == cartitem.Product_id);
+                        <tr>
+                            <td>@currentproduct.Name</td>
+                            <td>
+                                <ul>
+                                    <li>Description = >@currentproduct.Description</li>
+                                    <li>Stock = >@currentproduct.Stock</li>
+                                    <li>Price = >@currentproduct.Price</li>
+
+                                </ul>
+                            </td>
+                            <td>@currentproduct.P_category</td>
+                            <td>
+                                <img style="width:80px;height:80px" src="@currentproduct.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                            </td>
+                            <td>
+                                <a href="/buyswap/view/@currentproduct.Id" class="btn btn-info">
+                                    <span class="oi oi-book"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromCart(cartitem.Id,currentproduct.Name))">
+                                    <span class="oi oi-delete"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+@code {
+    private List<Product> Products;
+    private List<Cart> carts;
+    private List<CartItem> cartitems;
+    private Cart currentcart;
+    private Cart addNewCart = new Cart();
+    public string username;
+    public Product currentproduct;
+    private int currentUserCartId;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
+        currentUserCartId = -69;
+        foreach (Cart cart in carts)
+        {
+            if (cart.Username == username)
+            {
+                currentUserCartId = cart.Id;
+                currentcart = cart;
+            }
+        }
+        @*Create a new cart if the user had not yet created their cart*@
+        if (currentUserCartId == -69)
+        {
+            addNewCart.Username = username;
+            await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
+            carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
+            foreach (Cart cart in carts)
+            {
+                if (cart.Username == username)
+                {
+                    currentcart = cart;
+                }
+            }
+        }
+        cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
+    }
+
+    async Task RemoveFromCart(int cartitemid, string productName)
+    {
+        var cartitem = cartitems.First(q => q.Id == cartitemid);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {productName}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
+            await OnInitializedAsync();
+        }
+    }
 }
