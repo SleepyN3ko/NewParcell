@@ -29,8 +29,8 @@ namespace Parcell.Server.Data
         public DbSet<SwapCategory> SwapCategories { get; set; }
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<WishListItem> WishListItems { get; set; }
-        public DbSet<WishList> Carts { get; set; }
-        public DbSet<WishListItem> CartItems { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
