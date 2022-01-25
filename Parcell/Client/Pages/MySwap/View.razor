@@ -9,29 +9,31 @@
 @if (finished == true)
 {
     <div style="width:100%;padding-left:5%;padding-right:5%;">
-        <div style="width:33%; float:left;text-align:center;" class="center">
-            <h1>Swapper: @swap.SProduct.Username</h1>
+        <div style="width: 33%; height: 100%; float: left; text-align: center; position: relative;" class="center">
+            <h4>Swapper: @swap.SProduct.Username</h4>
             <br />
             <div style="width:100%;height:500px;">
                 <img style="max-width:90%;" src="@swap.SProduct.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
             </div>
             <br />
             <b>@swap.SProduct.Name</b>
+            <p><b>Quantity: </b>@swap.SProduct_quantity</p>
             <br />
             <button type="button" class="btn @swapButtonColor" @onclick="@ToggleSwapStatus" disabled="@disableSwapButton">@swapButtonText</button>
         </div>
         <div style="width: 33%; float: left; text-align: center;" class="center">
             <h1>Current Status</h1>
-
+            @message
         </div>
-        <div style="width: 33%; float: left; text-align: center;" class="center">
-            <h1>Product Owner: @swap.PProduct.Username</h1>
+        <div style="width: 33%; height: 100%; float: left; text-align: center; position: relative;" class="center">
+            <h4>Owner: @swap.PProduct.Username</h4>
             <br />
             <div style="width:100%;height:500px;">
                 <img style="max-width:90%;" src="@swap.PProduct.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
             </div>
             <br />
             <b>@swap.PProduct.Name</b>
+            <p><b>Quantity: </b>@swap.PProduct_quantity</p>
             <br />
             <button type="button" class="btn @productButtonColor" @onclick="@ToggleProductStatus" disabled="@disableProductButton">@productButtonText</button>
         </div>
@@ -49,6 +51,7 @@
     public Boolean disableProductButton;
     public string username;
     public Boolean finished = false;
+    public string message;
     protected async override Task OnParametersSetAsync()
     {
         swap = await _client.GetFromJsonAsync<Swap>($"{Endpoints.SwapsEndpoint}/{id}");
@@ -60,6 +63,24 @@
         productButtonColor = swap.PStatus == false ? "btn-danger" : "btn-success";
         productButtonText = swap.PStatus == false ? "Waiting" : "Accepted";
         disableProductButton = swap.PProduct.Username == username ? false : true;
+        if (swap.PStatus == true && swap.SStatus == true)
+        {
+            message = "Swap has been completed";
+            disableProductButton = true;
+            disableSwapButton = true;
+        }
+        else if (swap.PStatus == true && swap.SStatus == false)
+        {
+            message = "waiting for " + swap.SProduct.Username + " to accept";
+        }
+        else if (swap.PStatus == false && swap.SStatus == true)
+        {
+            message = "waiting for " + swap.PProduct.Username + " to accept";
+        }
+        else
+        {
+            message = "waiting for " + swap.PProduct.Username + " and " + swap.SProduct.Username + " to accept";
+        }
         finished = true;
         StateHasChanged();
     }

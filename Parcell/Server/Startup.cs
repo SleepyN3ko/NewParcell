@@ -11,7 +11,6 @@ using Parcell.Server.Data;
 using Parcell.Server.IRepository;
 using Parcell.Server.Repository;
 using Parcell.Server.Models;
-using Syncfusion.Blazor;
 using System.Linq;
 using CarRentalManagement.Server.Repository;
 using Parcell.Client.Components;
