@@ -65,7 +65,7 @@
         disableProductButton = swap.PProduct.Username == username ? false : true;
         if (swap.PStatus == true && swap.SStatus == true)
         {
-            message = "Swap has been completed";
+            message = "Swap has been accepted";
             disableProductButton = true;
             disableSwapButton = true;
         }
@@ -89,6 +89,13 @@
         swap.SStatus = !swap.SStatus;
         await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
         await OnParametersSetAsync();
+        if (swap.PStatus == true && swap.SStatus == true)
+        {
+            swap.PProduct.Stock -= swap.PProduct_quantity;
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
+            swap.SProduct.Stock -= swap.SProduct_quantity;
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.SProduct);
+        }
         StateHasChanged();
     }
     private async Task ToggleProductStatus()
@@ -97,6 +104,13 @@
         swap.PStatus = !swap.PStatus;
         await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
         await OnParametersSetAsync();
+        if (swap.PStatus == true && swap.SStatus == true)
+        {
+            swap.PProduct.Stock -= swap.PProduct_quantity;
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
+            swap.SProduct.Stock -= swap.SProduct_quantity;
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.SProduct);
+        }
         StateHasChanged();
     }
 }

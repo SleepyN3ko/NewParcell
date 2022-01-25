@@ -33,12 +33,16 @@
                             <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
                                 @if (Products != null)
                                 {
+                                    <option value="--select--"></option>
                                     foreach (var eachproduct in Products)
                                     {
                                         if (eachproduct.Username == s_Username)
                                         {
-                                            <option value="@eachproduct.Id">@eachproduct.Name</option>
-                                            swapdetails.SProduct_id = eachproduct.Id;
+                                            if (eachproduct.P_category == product.S_Category)
+                                            {
+                                                <option value="@eachproduct.Id" default>@eachproduct.Name</option>
+                                                swapdetails.SProduct_id = eachproduct.Id;
+                                            }
                                         }
                                     }
                                 }
