@@ -14,11 +14,9 @@ namespace Parcell.Shared.Domain
         public Boolean PStatus { get; set; }
         public DateTime Date { get; set; }
         public int Deadline { get; set; }
-        public string S_username { get; set; }
         [Required]
         public int SProduct_id { get; set; }
         public virtual Product SProduct { get; set; }
-        public string P_username { get; set; }
         public int PProduct_id { get; set; }
         public virtual Product PProduct { get; set; }
     }

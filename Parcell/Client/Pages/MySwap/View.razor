@@ -1,0 +1,82 @@
+﻿@page "/myswap/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (finished == true)
+{
+    <div style="width:100%;padding-left:5%;padding-right:5%;">
+        <div style="width:33%; float:left;text-align:center;" class="center">
+            <h1>Swapper: @swap.SProduct.Username</h1>
+            <br />
+            <div style="width:100%;height:500px;">
+                <img style="max-width:90%;" src="@swap.SProduct.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
+            </div>
+            <br />
+            <b>@swap.SProduct.Name</b>
+            <br />
+            <button type="button" class="btn @swapButtonColor" @onclick="@ToggleSwapStatus" disabled="@disableSwapButton">@swapButtonText</button>
+        </div>
+        <div style="width: 33%; float: left; text-align: center;" class="center">
+            <h1>Current Status</h1>
+
+        </div>
+        <div style="width: 33%; float: left; text-align: center;" class="center">
+            <h1>Product Owner: @swap.PProduct.Username</h1>
+            <br />
+            <div style="width:100%;height:500px;">
+                <img style="max-width:90%;" src="@swap.PProduct.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
+            </div>
+            <br />
+            <b>@swap.PProduct.Name</b>
+            <br />
+            <button type="button" class="btn @productButtonColor" @onclick="@ToggleProductStatus" disabled="@disableProductButton">@productButtonText</button>
+        </div>
+    </div>      
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    Swap swap = new Swap();
+    public string swapButtonColor;
+    public string swapButtonText;
+    public Boolean disableSwapButton;
+    public string productButtonColor;
+    public string productButtonText;
+    public Boolean disableProductButton;
+    public string username;
+    public Boolean finished = false;
+    protected async override Task OnParametersSetAsync()
+    {
+        swap = await _client.GetFromJsonAsync<Swap>($"{Endpoints.SwapsEndpoint}/{id}");
+        swap.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.SProduct_id}");
+        swap.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.PProduct_id}");
+        swapButtonColor = swap.SStatus == false ? "btn-danger" : "btn-success";
+        swapButtonText = swap.SStatus == false ? "Waiting" : "Accepted";
+        disableSwapButton = swap.SProduct.Username == username ? false : true;
+        productButtonColor = swap.PStatus == false ? "btn-danger" : "btn-success";
+        productButtonText = swap.PStatus == false ? "Waiting" : "Accepted";
+        disableProductButton = swap.PProduct.Username == username ? false : true;
+
+        finished = true;
+        StateHasChanged();
+    }
+    private async Task ToggleSwapStatus()
+    {
+        swap.SStatus = !swap.SStatus;
+        await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
+        await OnParametersSetAsync();
+        StateHasChanged();
+    }
+    private async Task ToggleProductStatus()
+    {
+
+        swap.PStatus = !swap.PStatus;
+        await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
+        await OnParametersSetAsync();
+        StateHasChanged();
+    }
+}

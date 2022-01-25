@@ -92,16 +92,22 @@ else
         @*Create a new cart if the user had not yet created their cart*@
         if (currentUserCartId == -69)
         {
+
             addNewCart.Username = username;
-            await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
-            carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
-            foreach (Cart cart in carts)
-            {
-                if (cart.Username == username)
-                {
-                    currentcart = cart;
-                }
-            }
+            var response = await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
+            string location = response.Headers.Location.AbsoluteUri;
+
+            currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
+            //addNewCart.Username = username;
+            //await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
+            //carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
+            //foreach (Cart cart in carts)
+            //{
+            //    if (cart.Username == username)
+            //    {
+            //        currentcart = cart;
+            //    }
+            //}
         }
         cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
     }

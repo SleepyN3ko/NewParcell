@@ -22,6 +22,8 @@ else
                             <th>Product Owner</th>
                             <th>Swap Item</th>
                             <th>Product Item</th>
+                            <th>Edit Swap</th>
+                            <th>Remove Swap</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +36,16 @@ else
                                     <td>@swap.P_username</td>
                                     <td>@swap.SProduct_id</td>
                                     <td>@swap.PProduct_id</td>
+                                    <td>
+                                        <a href="/myswap/view/@swap.Id" class="btn btn-info">
+                                            <span class="oi oi-book"></span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="@(()=>RemoveFromSwap(swap.Id,"this swap?"))">
+                                            <span class="oi oi-delete"></span>
+                                        </button>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -48,8 +60,20 @@ else
 
     private List<Swap> swaps;
 
+
     protected async override Task OnInitializedAsync()
     {
         swaps = await _client.GetFromJsonAsync<List<Swap>>($"{Endpoints.SwapsEndpoint}");
+    }
+    async Task RemoveFromSwap(int swapitemid, string productName)
+    {
+        var swapitem = swaps.First(q => q.Id == swapitemid);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {productName}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"{Endpoints.SwapsEndpoint}/{swapitemid}");
+            await OnInitializedAsync();
+        }
     }
 }
