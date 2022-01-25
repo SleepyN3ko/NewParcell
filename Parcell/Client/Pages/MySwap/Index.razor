@@ -4,12 +4,10 @@
 @attribute [Authorize]
 
 
-@if (swaps == null)
+@if (finished == false)
 {
     <div class="alert alert-info">Loading Swaps...</div>
 }
-
-
 else
 {
     <AuthorizeView Context="getName">
@@ -29,11 +27,11 @@ else
                     <tbody>
                         @foreach (var swap in swaps)
                         {
-                            @if (swap.S_username != getName.User.Identity.Name || swap.P_username != getName.User.Identity.Name)
+                            @if (swap.PProduct.Username != getName.User.Identity.Name || swap.SProduct.Username != getName.User.Identity.Name)
                             {
                                 <tr>
-                                    <td>@swap.S_username</td>
-                                    <td>@swap.P_username</td>
+                                    <td>@swap.SProduct.Username</td>
+                                    <td>@swap.PProduct.Username</td>
                                     <td>@swap.SProduct_id</td>
                                     <td>@swap.PProduct_id</td>
                                     <td>
@@ -59,11 +57,22 @@ else
 @code {
 
     private List<Swap> swaps;
-
+    Product swapproduct = new Product();
+    Product ownerproduct = new Product();
+    public Boolean finished = false;
+    public string username;
 
     protected async override Task OnInitializedAsync()
     {
         swaps = await _client.GetFromJsonAsync<List<Swap>>($"{Endpoints.SwapsEndpoint}");
+        //need to get all products here as async code cannot be run above
+        //also swap cannot store username as that causes data redundency
+        //no method of optimising this without using redundent data
+        foreach (var swap in swaps) {
+            swap.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.SProduct_id}");
+            swap.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.PProduct_id}");
+        }
+        finished = true;
     }
     async Task RemoveFromSwap(int swapitemid, string productName)
     {
