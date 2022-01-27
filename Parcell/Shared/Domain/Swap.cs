@@ -19,10 +19,12 @@ namespace Parcell.Shared.Domain
         [Required]
         public int SProduct_id { get; set; }
         [Required]
+        [Range(1,1000000)]
         public int SProduct_quantity { get; set; } = 1;
         public virtual Product SProduct { get; set; }
         public int PProduct_id { get; set; }
         [Required]
+        [Range(1, 1000000)]
         public int PProduct_quantity { get; set; } = 1;
         public virtual Product PProduct { get; set; }
     }

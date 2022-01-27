@@ -20,10 +20,12 @@ namespace Parcell.Shared.Domain
         [Required]
         public string Description { get; set; }
         [Required]
+        [Range(1, 1000000)]
         public int Stock { get; set; }
         public string Thumbnail { get; set; }
 
         [Required]
+        [Range(1,1000000000)]
         public int Price { get; set; }
         [Required]
         public string P_category { get; set; }

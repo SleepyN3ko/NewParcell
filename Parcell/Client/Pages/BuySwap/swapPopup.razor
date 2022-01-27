@@ -11,7 +11,7 @@
                 <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@swapdetails" OnValidSubmit="@OnValidSubmit">
+                <EditForm EditContext="editContext" OnValidSubmit="@OnValidSubmit">
                     <DataAnnotationsValidator />
                     <div class="form-group">
                         <label title="How much you swapping">Swap Quantity</label>
@@ -33,24 +33,29 @@
                             <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
                                 @if (Products != null)
                                 {
-                                    <option value="--select--"></option>
+                                    <option value="" default="true" hidden>--Select--</option>
                                     foreach (var eachproduct in Products)
                                     {
                                         if (eachproduct.Username == s_Username)
                                         {
+
                                             if (eachproduct.P_category == product.S_Category)
                                             {
                                                 <option value="@eachproduct.Id" default>@eachproduct.Name</option>
-                                                swapdetails.SProduct_id = eachproduct.Id;
+                                                suitable_products = true;
                                             }
                                         }
+                                    }
+                                    if (suitable_products == false)
+                                    {
+                                        <option value="">No suitable products</option>
                                     }
                                 }
                             </InputSelect>
                             <ValidationMessage For="@(()=>swapdetails.SProduct_id)" />
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success btn-block">
+                    <button type="submit" class="btn btn-success btn-block" disabled="@disable_button">
                         @ButtonText
                     </button>
                 </EditForm>
@@ -86,11 +91,12 @@
     public Boolean disable_button = true;
     Product sProduct = new Product();
     EditContext editContext;
+    public Boolean suitable_products = false;
 
     protected async override Task OnInitializedAsync()
     {
-        //editContext = new EditContext(swapdetails);
-        //editContext.OnFieldChanged += EditContext_OnFieldChanged;
+        editContext = new EditContext(swapdetails);
+        editContext.OnFieldChanged += EditContext_OnFieldChanged;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
         swapdetails.SStatus = true;
         swapdetails.PStatus = false;
@@ -102,7 +108,12 @@
     }
     private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
     {
-        disable_button = false;
+        //only enables button when a value is selected
+        //improves user experience
+        if (swapdetails.SProduct_id!=0)
+        {
+            disable_button = false;
+        }
     }
     public bool DeleteDialogOpen { get; set; }
 
