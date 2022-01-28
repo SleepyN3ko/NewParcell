@@ -1,4 +1,10 @@
-﻿body {
+﻿name{
+    font-size : 30px;
+    font-weight : 700;
+}
+
+
+body {
     background: #eee;
 }
 #wrapper {
@@ -124,7 +130,7 @@
     }
 
 .pro-d-title {
-    font-size: 16px;
+    font-size: 26px;
     margin-top: 0;
 }
 

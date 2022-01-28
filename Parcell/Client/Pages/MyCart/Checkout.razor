@@ -1,0 +1,12 @@
+﻿@page "/mycart/checkout"
+
+@inject HttpClient _client
+@inject IJSRuntime js
+@inject NavigationManager _navManager
+@attribute [Authorize]
+
+@code {
+    private List<Product> Products;
+    private List<Order> orders;
+    private List<OrderDetail> orderdetails;
+}
