@@ -11,9 +11,6 @@ namespace Parcell.Shared.Domain
         public int Id { get; set; }
         public Boolean Status { get; set; }
         public DateTime Date { get; set; }
-        public List<int> Product_Ids { get; set; }
-        public List<int> Product_Prices { get; set; }
-        public List<int> Product_Quantities { get; set; }
         public int Total_Price { get; set; }
         public string Username { get; set; }
 

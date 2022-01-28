@@ -1,4 +1,4 @@
-﻿@page "/mycart/checkout"
+﻿@page "/mycart/orders"
 
 @inject HttpClient _client
 @inject IJSRuntime js
@@ -8,5 +8,4 @@
 @code {
     private List<Product> Products;
     private List<Order> orders;
-    private List<OrderDetail> orderdetails;
 }

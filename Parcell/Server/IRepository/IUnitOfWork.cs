@@ -13,11 +13,8 @@ namespace Parcell.Server.IRepository
         IGenericRepository<Product> Products { get; }
         IGenericRepository<Category> Categories { get; }
         IGenericRepository<Order> Orders { get; }
-        IGenericRepository<OrderDetail> OrderDetails { get; }
-        IGenericRepository<PaymentDetail> PaymentDetails { get; }
-        IGenericRepository<ProductCategory> ProductCategories { get; }
+        IGenericRepository<OrderItem> OrderItems { get; }
         IGenericRepository<Swap> Swaps { get; }
-        IGenericRepository<SwapCategory> SwapCategories { get; }
         IGenericRepository<WishList> WishLists { get; }
         IGenericRepository<WishListItem> WishListItems { get; }
 

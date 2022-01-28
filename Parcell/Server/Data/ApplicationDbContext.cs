@@ -21,12 +21,9 @@ namespace Parcell.Server.Data
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<PaymentDetail> PaymentDetails { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Swap> Swaps { get; set; }
-        public DbSet<SwapCategory> SwapCategories { get; set; }
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<WishListItem> WishListItems { get; set; }
         public DbSet<Cart> Carts { get; set; }

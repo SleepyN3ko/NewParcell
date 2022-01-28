@@ -33,35 +33,35 @@ else
                 {
                     @if (currentcart.Id == cartitem.Cart_id)
                     {
-                        currentproduct = Products.First(q => q.Id == cartitem.Product_id);
+                        cartitem.Product = Products.First(q => q.Id == cartitem.Product_id);
                         <tr>
-                            <td>@currentproduct.Name</td>
+                            <td>@cartitem.Product.Name</td>
                             <td>
                                 <ul>
-                                    <li>Description = @currentproduct.Description</li>
-                                    <li>Stock = @currentproduct.Stock</li>
-                                    <li>Price = @currentproduct.Price</li>
+                                    <li>Description = @cartitem.Product.Description</li>
+                                    <li>Stock = @cartitem.Product.Stock</li>
+                                    <li>Price = @cartitem.Product.Price</li>
                                 </ul>
                             </td>
-                            <td>@currentproduct.P_category</td>
+                            <td>@cartitem.Product.P_category</td>
                             <td>
-                                <img style="width:80px;height:80px" src="@currentproduct.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                                <img style="width:80px;height:80px" src="@cartitem.Product.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
                             </td>
                             <td>
                                 @cartitem.Quantity
                             </td>
                             <td>
-                                <a href="/buyswap/view/@currentproduct.Id" class="btn btn-info">
+                                <a href="/buyswap/view/@cartitem.Product.Id" class="btn btn-info">
                                     <span class="oi oi-book"></span>
                                 </a>
                             </td>
                             <td>
-                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromCart(cartitem.Id,currentproduct.Name))">
+                                <button class="btn btn-danger" @onclick="@(()=>RemoveFromCart(cartitem.Id,cartitem.Product.Name))">
                                     <span class="oi oi-delete"></span>
                                 </button>
                             </td>
                             <td>
-                                <input type="checkbox" @onchange="eventArgs => { updateCheckout(cartitem.Id, eventArgs.Value); }"  />
+                                <input type="checkbox" @onchange="eventArgs => { updateCheckout(cartitem, eventArgs.Value); }"  />
                             </td>
                         </tr>
                     }
@@ -72,9 +72,9 @@ else
 }
 
 <button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;" 
-        @onclick="@addToCheckout">Checkout</button>
+        @onclick="@addToOrders">Make a order</button>
 <button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;" 
-        onclick="location.href = '/mycart/checkout';">View Checkout</button>
+        onclick="location.href = '/mycart/orders';">View Checkout</button>
 
 
 @code {
@@ -86,7 +86,10 @@ else
     public string username;
     public Product currentproduct;
     private int currentUserCartId;
-    public List<int> itemsToCheckout = new List<int>();
+    public List<CartItem> itemsToOrder = new List<CartItem>();
+    public Order currentOrder = new Order();
+    public OrderItem currentOrderItem = new OrderItem();
+    public int totalprice;
 
     protected async override Task OnInitializedAsync()
     {
@@ -102,54 +105,69 @@ else
             }
         }
         @*Create a new cart if the user had not yet created their cart*@
-        if (currentUserCartId == -69)
-        {
-
-            addNewCart.Username = username;
-            var response = await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
-            string location = response.Headers.Location.AbsoluteUri;
-
-            currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
-        }
-        cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
-    }
-
-    void updateCheckout(int cartitemid,object isChecked)
+    if (currentUserCartId == -69)
     {
-        if ((bool)isChecked)
-        {
-            //does not contain this item and just got checked
-            if (!itemsToCheckout.Contains(cartitemid))
-            {
-                itemsToCheckout.Add(cartitemid);
-            }
-        }
-        else
-        {
-            //removes the cartitem that got unchecked
-            if (itemsToCheckout.Contains(cartitemid))
-            {
-                itemsToCheckout.Remove(cartitemid);
-            }
-        }
-    }
 
-    async Task RemoveFromCart(int cartitemid, string productName)
-    {
-        var cartitem = cartitems.First(q => q.Id == cartitemid);
+        addNewCart.Username = username;
+        var response = await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
+        string location = response.Headers.Location.AbsoluteUri;
 
-        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");
-        if (confirm)
+        currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
+    }
+    cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
+}
+
+void updateCheckout(CartItem cartitem,object isChecked)
+{
+    if ((bool)isChecked)
+    {
+        //does not contain this item and just got checked
+        if (!itemsToOrder.Contains(cartitem))
         {
-            await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
-            await OnInitializedAsync();
+            itemsToOrder.Add(cartitem);
         }
     }
-    async Task addToOrders()
+    else
     {
-        foreach (int orderitem in itemsToCheckout)
-            {
-                
-            }
+        //removes the cartitem that got unchecked
+        if (itemsToOrder.Contains(cartitem))
+        {
+            itemsToOrder.Remove(cartitem);
+        }
     }
+}
+
+async Task RemoveFromCart(int cartitemid, string productName)
+{
+    var cartitem = cartitems.First(q => q.Id == cartitemid);
+
+    var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");
+    if (confirm)
+    {
+        await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
+        await OnInitializedAsync();
+    }
+}
+async Task addToOrders()
+{
+
+    currentOrder.Username = username;
+    currentOrder.Status = false;
+    currentOrder.Date = DateTime.Now;
+    totalprice = 0;
+    var response = await _client.PostAsJsonAsync(Endpoints.OrdersEndpoint, currentOrder);
+    string location = response.Headers.Location.AbsoluteUri;
+    currentOrder = await _client.GetFromJsonAsync<Order>(location);
+    foreach (CartItem orderitem in itemsToOrder)
+    {
+        currentOrderItem.Product_id = orderitem.Product.Id;
+        currentOrderItem.Product_Price = orderitem.Product.Price;
+        currentOrderItem.Product_Quantity = orderitem.Quantity;
+        currentOrderItem.Order_id = currentOrder.Id;
+        totalprice += currentOrderItem.Product_Price * currentOrderItem.Product_Quantity;
+        await _client.PostAsJsonAsync(Endpoints.OrderItemsEndpoint, currentOrderItem);
+    }
+    currentOrder.Total_Price = totalprice;
+    await _client.PutAsJsonAsync(location, currentOrder);
+}
 }
