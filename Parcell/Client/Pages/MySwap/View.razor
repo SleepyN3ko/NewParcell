@@ -94,7 +94,7 @@
             swap.PProduct.Stock -= swap.PProduct_quantity;
             await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
             swap.SProduct.Stock -= swap.SProduct_quantity;
-            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.SProduct);
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.SProduct.Id}", swap.SProduct);
         }
         StateHasChanged();
     }
@@ -109,7 +109,7 @@
             swap.PProduct.Stock -= swap.PProduct_quantity;
             await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
             swap.SProduct.Stock -= swap.SProduct_quantity;
-            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.SProduct);
+            await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.SProduct.Id}", swap.SProduct);
         }
         StateHasChanged();
     }
