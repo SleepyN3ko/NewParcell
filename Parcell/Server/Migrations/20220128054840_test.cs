@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class getData : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -304,6 +304,7 @@ namespace Parcell.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
                     Product_id = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     Cart_id = table.Column<int>(type: "int", nullable: false),
@@ -418,11 +419,11 @@ namespace Parcell.Server.Migrations
                     PStatus = table.Column<bool>(type: "bit", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deadline = table.Column<int>(type: "int", nullable: false),
-                    S_username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SProduct_id = table.Column<int>(type: "int", nullable: false),
+                    SProduct_quantity = table.Column<int>(type: "int", nullable: false),
                     SProductId = table.Column<int>(type: "int", nullable: true),
-                    P_username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PProduct_id = table.Column<int>(type: "int", nullable: false),
+                    PProduct_quantity = table.Column<int>(type: "int", nullable: false),
                     PProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -474,8 +475,8 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "CartItems",
-                columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Status" },
-                values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false });
+                columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Quantity", "Status" },
+                values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, 0, false });
 
             migrationBuilder.InsertData(
                 table: "Carts",

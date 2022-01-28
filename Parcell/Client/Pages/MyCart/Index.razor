@@ -22,8 +22,10 @@ else
                     <th>Details</th>
                     <th>Category</th>
                     <th>Picture</th>
+                    <th>Quantity selected</th>
                     <th>View product</th>
-                    <th>Remove</th>
+                    <th>Remove from cart</th>
+                    <th>Add to checkout</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,15 +38,17 @@ else
                             <td>@currentproduct.Name</td>
                             <td>
                                 <ul>
-                                    <li>Description = >@currentproduct.Description</li>
-                                    <li>Stock = >@currentproduct.Stock</li>
-                                    <li>Price = >@currentproduct.Price</li>
-
+                                    <li>Description = @currentproduct.Description</li>
+                                    <li>Stock = @currentproduct.Stock</li>
+                                    <li>Price = @currentproduct.Price</li>
                                 </ul>
                             </td>
                             <td>@currentproduct.P_category</td>
                             <td>
                                 <img style="width:80px;height:80px" src="@currentproduct.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                            </td>
+                            <td>
+                                @cartitem.Quantity
                             </td>
                             <td>
                                 <a href="/buyswap/view/@currentproduct.Id" class="btn btn-info">
@@ -56,6 +60,9 @@ else
                                     <span class="oi oi-delete"></span>
                                 </button>
                             </td>
+                            <td>
+                                <input type="checkbox" />
+                            </td>
                         </tr>
                     }
                 }
@@ -64,6 +71,8 @@ else
     </div>
 }
 
+<button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;" onclick="location.href = '/mycart/checkout';">Checkout</button>
+<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;" onclick="location.href = '/mycart/checkout';">View Checkout</button>
 
 
 @code {
@@ -116,7 +125,7 @@ else
     {
         var cartitem = cartitems.First(q => q.Id == cartitemid);
 
-        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {productName}?");
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");
         if (confirm)
         {
             await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");

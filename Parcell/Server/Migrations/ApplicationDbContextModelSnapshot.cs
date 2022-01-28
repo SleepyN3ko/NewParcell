@@ -394,6 +394,9 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Product_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -412,6 +415,7 @@ namespace Parcell.Server.Migrations
                             Cart_id = 0,
                             Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Product_id = 0,
+                            Quantity = 0,
                             Status = false
                         });
                 });

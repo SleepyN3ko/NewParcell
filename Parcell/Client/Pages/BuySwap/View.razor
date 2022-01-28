@@ -23,17 +23,18 @@
                                 <b>@product.Name</b>
                             </a>
                         </h4>
-                        <hr />
+                        <hr/>
                         <p>
+                            <strong>Product description:</strong><br>
                             @product.Description
                         </p>
                         <div class="product_meta">
-                            <span class="posted_in"> <strong>Categories:</strong><a>@product.P_category</a></span>
+                            <span class="posted_in"> <strong>Categories: </strong><a>@product.P_category</a></span>
                         </div>
-                        <div class="m-bot15"> <strong>Price : </strong><span class="price">@product.Price</span></div>
+                        <div class="m-bot15"> <strong>Price: </strong><span class="price">@product.Price</span></div>
                         <div class="form-group">
                             <label>Quantity</label>
-                            <input type="number" placeholder="1" class="col-md-3 form-control">
+                            <input type="number" @bind-value="@cartitem.Quantity"/>
                         </div>
                         <AuthorizeView Context="getName">
                             @{ username = getName.User.Identity.Name;}
@@ -49,7 +50,7 @@
                             if (product.S_Category != "noswap")
                             {
                                 <p>
-                                    <button class="btn btn-round" style="background-color:greenyellow;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-cart"></span> Add to Swap</button>
+                                    <button class="btn btn-round" style="background-color:greenyellow;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-cart"></span>Send Swap Request</button>
                                 </p>
 
                             }
@@ -84,6 +85,8 @@
     private List<Cart> carts;
     private Cart addNewCart = new Cart();
     private Cart currentCart;
+    public CartItem currentcartitem;
+    
 
     protected async override Task OnParametersSetAsync()
     {

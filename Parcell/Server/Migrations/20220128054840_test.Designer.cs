@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220125022111_getData")]
-    partial class getData
+    [Migration("20220128054840_test")]
+    partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -396,6 +396,9 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Product_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -414,6 +417,7 @@ namespace Parcell.Server.Migrations
                             Cart_id = 0,
                             Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Product_id = 0,
+                            Quantity = 0,
                             Status = false
                         });
                 });
@@ -648,11 +652,11 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("PProduct_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("PProduct_quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
-
-                    b.Property<string>("P_username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SProductId")
                         .HasColumnType("int");
@@ -660,11 +664,11 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("SProduct_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("SProduct_quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("SStatus")
                         .HasColumnType("bit");
-
-                    b.Property<string>("S_username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
