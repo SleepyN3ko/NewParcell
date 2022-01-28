@@ -26,6 +26,7 @@ else
                             <th>Details</th>
                             <th>Category</th>
                             <th>Picture</th>
+                            <th>View Product</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,7 +36,7 @@ else
                             {
 
                                 <tr>
-                                    <td><a href="/buyswap/view/@product.Id">@product.Name</a></td>
+                                    <td>@product.Name</td>
                                     <td>
                                         <ul>
                                             <li>Description = @product.Description</li>
@@ -46,6 +47,11 @@ else
                                     </td>
                                     <td>@product.P_category</td>
                                     <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" /></td>
+                                    <td>
+                                        <a href="/buyswap/view/@product.Id" class="btn btn-info">
+                                            <span class="oi oi-book"></span>
+                                        </a>
+                                    </td>
                                 </tr>
                             }
                         }
