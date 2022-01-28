@@ -61,7 +61,7 @@ else
                                 </button>
                             </td>
                             <td>
-                                <input type="checkbox" />
+                                <input type="checkbox" @onchange="eventArgs => { updateCheckout(cartitem.Id, eventArgs.Value); }"  />
                             </td>
                         </tr>
                     }
@@ -71,8 +71,10 @@ else
     </div>
 }
 
-<button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;" onclick="location.href = '/mycart/checkout';">Checkout</button>
-<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;" onclick="location.href = '/mycart/checkout';">View Checkout</button>
+<button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;" 
+        @onclick="@addToCheckout">Checkout</button>
+<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;" 
+        onclick="location.href = '/mycart/checkout';">View Checkout</button>
 
 
 @code {
@@ -84,6 +86,7 @@ else
     public string username;
     public Product currentproduct;
     private int currentUserCartId;
+    public List<int> itemsToCheckout = new List<int>();
 
     protected async override Task OnInitializedAsync()
     {
@@ -107,18 +110,28 @@ else
             string location = response.Headers.Location.AbsoluteUri;
 
             currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
-            //addNewCart.Username = username;
-            //await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
-            //carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
-            //foreach (Cart cart in carts)
-            //{
-            //    if (cart.Username == username)
-            //    {
-            //        currentcart = cart;
-            //    }
-            //}
         }
         cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
+    }
+
+    void updateCheckout(int cartitemid,object isChecked)
+    {
+        if ((bool)isChecked)
+        {
+            //does not contain this item and just got checked
+            if (!itemsToCheckout.Contains(cartitemid))
+            {
+                itemsToCheckout.Add(cartitemid);
+            }
+        }
+        else
+        {
+            //removes the cartitem that got unchecked
+            if (itemsToCheckout.Contains(cartitemid))
+            {
+                itemsToCheckout.Remove(cartitemid);
+            }
+        }
     }
 
     async Task RemoveFromCart(int cartitemid, string productName)
@@ -131,5 +144,12 @@ else
             await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
             await OnInitializedAsync();
         }
+    }
+    async Task addToOrders()
+    {
+        foreach (int orderitem in itemsToCheckout)
+            {
+                
+            }
     }
 }

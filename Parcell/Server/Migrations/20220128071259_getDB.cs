@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class test : Migration
+    public partial class getDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

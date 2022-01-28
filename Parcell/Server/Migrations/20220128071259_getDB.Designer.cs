@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220128054840_test")]
-    partial class test
+    [Migration("20220128071259_getDB")]
+    partial class getDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
