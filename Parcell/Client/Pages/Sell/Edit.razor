@@ -1,7 +1,8 @@
 ﻿@page "/products/edit/{id:int}"
-@inject HttpClient _client 
+@inject HttpClient _client
 @inject NavigationManager _navManager
-
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 <h3>Edit Product</h3>
 <FormComponent ButtonText="Update" OnValidSubmit="EditProduct" product="product" />
 @code {
@@ -9,11 +10,16 @@
     Product product = new Product();
     protected async override Task OnParametersSetAsync()
     {
+        _interceptor.MonitorEvent();
         product = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{id}");
     }
     async Task EditProduct()
     {
-        await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{id}",product);
+        await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{id}", product);
         _navManager.NavigateTo("/products/");
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }  

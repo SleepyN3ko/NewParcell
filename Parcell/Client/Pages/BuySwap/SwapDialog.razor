@@ -1,4 +1,5 @@
-﻿
+﻿@inject HttpInterceptorService _interceptor
+@implements IDisposable
 @inject HttpClient _client
 @attribute [Authorize]
 
@@ -96,6 +97,7 @@
 
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         editContext = new EditContext(swapdetails);
         editContext.OnFieldChanged += EditContext_OnFieldChanged;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
@@ -111,7 +113,7 @@
     {
         //only enables button when a value is selected
         //improves user experience
-        if (swapdetails.SProduct_id!=0)
+        if (swapdetails.SProduct_id != 0)
         {
             disable_button = false;
         }
@@ -126,5 +128,9 @@
     private Task ModalOk()
     {
         return OnClose.InvokeAsync(true);
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

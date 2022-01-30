@@ -4,6 +4,8 @@
 @inject IJSRuntime js
 @inject NavigationManager _navManager
 @attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
@@ -51,12 +53,13 @@ else
             </tbody>
         </table>
     </div>
-    @if (currentOrder.Status == false) {
+    @if (currentOrder.Status == false)
+    {
         <button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;"
-        @onclick="@payForOrder">
+                @onclick="@payForOrder">
             Pay
-        </button> }
-    
+        </button>}
+
 
     <button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
             onclick="location.href = '/mycart/orders';">
@@ -77,6 +80,7 @@ else
     Boolean finished;
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         finished = false;
         orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
         currentOrder = await _client.GetFromJsonAsync<Order>($"{Endpoints.OrdersEndpoint}/{id}");
@@ -132,9 +136,9 @@ else
                         currentProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{orderitem.Product_id}");
                         Balance balance = balances.First(q => q.Username == currentProduct.Username);
                         balance.Amount += orderitem.Product_Price * orderitem.Product_Quantity;
-                        await _client.PutAsJsonAsync<Balance>($"{Endpoints.BalancesEndpoint}/{balance.Id}",balance);
+                        await _client.PutAsJsonAsync<Balance>($"{Endpoints.BalancesEndpoint}/{balance.Id}", balance);
                         currentProduct.Stock -= orderitem.Product_Quantity;
-                        await _client.PutAsJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{currentProduct.Id}",currentProduct);
+                        await _client.PutAsJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{currentProduct.Id}", currentProduct);
                     }
                 }
                 _navManager.NavigateTo("mycart/orders");
@@ -149,5 +153,9 @@ else
                 _navManager.NavigateTo("topup");
             }
         }
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

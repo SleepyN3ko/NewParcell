@@ -4,7 +4,8 @@
 @inject IJSRuntime js
 @inject NavigationManager _navManager
 @attribute [Authorize]
-
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
@@ -72,6 +73,7 @@ else
     Boolean finished;
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         finished = false;
         orders = await _client.GetFromJsonAsync<List<Order>>($"{Endpoints.OrdersEndpoint}");
         orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
@@ -95,5 +97,9 @@ else
             }
             await OnInitializedAsync();
         }
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

@@ -4,6 +4,8 @@
 @inject IJSRuntime js
 @inject NavigationManager _navManager
 @attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
@@ -61,7 +63,7 @@ else
                                 </button>
                             </td>
                             <td>
-                                <input type="checkbox" @onchange="eventArgs => { updateCheckout(cartitem, eventArgs.Value); }"  />
+                                <input type="checkbox" @onchange="eventArgs => { updateCheckout(cartitem, eventArgs.Value); }" />
                             </td>
                         </tr>
                     }
@@ -71,10 +73,14 @@ else
     </div>
 }
 
-<button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;" 
-        @onclick="@addToOrders">Make a order</button>
-<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;" 
-        onclick="location.href = '/mycart/orders';">View Orders</button>
+<button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;"
+        @onclick="@addToOrders">
+    Make a order
+</button>
+<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
+        onclick="location.href = '/mycart/orders';">
+    View Orders
+</button>
 
 
 @code {
@@ -93,6 +99,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
         carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
         currentUserCartId = -69;
@@ -105,74 +112,78 @@ else
             }
         }
         @*Create a new cart if the user had not yet created their cart*@
-    if (currentUserCartId == -69)
-    {
-
-        addNewCart.Username = username;
-        var response = await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
-        string location = response.Headers.Location.AbsoluteUri;
-
-        currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
-    }
-    cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
-}
-
-void updateCheckout(CartItem cartitem,object isChecked)
-{
-    if ((bool)isChecked)
-    {
-        //does not contain this item and just got checked
-        if (!itemsToOrder.Contains(cartitem))
+        if (currentUserCartId == -69)
         {
-            itemsToOrder.Add(cartitem);
+
+            addNewCart.Username = username;
+            var response = await _client.PostAsJsonAsync(Endpoints.CartEndpoint, addNewCart);
+            string location = response.Headers.Location.AbsoluteUri;
+
+            currentcart = await _client.GetFromJsonAsync<Cart>($"{location}");
+        }
+        cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
+    }
+
+    void updateCheckout(CartItem cartitem, object isChecked)
+    {
+        if ((bool)isChecked)
+        {
+            //does not contain this item and just got checked
+            if (!itemsToOrder.Contains(cartitem))
+            {
+                itemsToOrder.Add(cartitem);
+            }
+        }
+        else
+        {
+            //removes the cartitem that got unchecked
+            if (itemsToOrder.Contains(cartitem))
+            {
+                itemsToOrder.Remove(cartitem);
+            }
         }
     }
-    else
+
+    async Task RemoveFromCart(int cartitemid, string productName)
     {
-        //removes the cartitem that got unchecked
-        if (itemsToOrder.Contains(cartitem))
+        var cartitem = cartitems.First(q => q.Id == cartitemid);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");
+        if (confirm)
         {
-            itemsToOrder.Remove(cartitem);
+            await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
+            await OnInitializedAsync();
         }
     }
-}
-
-async Task RemoveFromCart(int cartitemid, string productName)
-{
-    var cartitem = cartitems.First(q => q.Id == cartitemid);
-
-    var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");
-    if (confirm)
+    async Task addToOrders()
     {
-        await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{cartitemid}");
-        await OnInitializedAsync();
-    }
-}
-async Task addToOrders()
-{
-    //only make an order if list is not empty
-    if (itemsToOrder.Any())
-    {
-        currentOrder.Username = username;
-        currentOrder.Status = false;
-        currentOrder.Date = DateTime.Now;
-        totalprice = 0;
-        var response = await _client.PostAsJsonAsync(Endpoints.OrdersEndpoint, currentOrder);
-        string location = response.Headers.Location.AbsoluteUri;
-        currentOrder = await _client.GetFromJsonAsync<Order>(location);
-        foreach (CartItem orderitem in itemsToOrder)
+        //only make an order if list is not empty
+        if (itemsToOrder.Any())
         {
-            currentOrderItem.Product_id = orderitem.Product.Id;
-            currentOrderItem.Product_Price = orderitem.Product.Price;
-            currentOrderItem.Product_Quantity = orderitem.Quantity;
-            currentOrderItem.Order_id = currentOrder.Id;
-            totalprice += currentOrderItem.Product_Price * currentOrderItem.Product_Quantity;
-            await _client.PostAsJsonAsync(Endpoints.OrderItemsEndpoint, currentOrderItem);
-            await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{orderitem.Id}");
+            currentOrder.Username = username;
+            currentOrder.Status = false;
+            currentOrder.Date = DateTime.Now;
+            totalprice = 0;
+            var response = await _client.PostAsJsonAsync(Endpoints.OrdersEndpoint, currentOrder);
+            string location = response.Headers.Location.AbsoluteUri;
+            currentOrder = await _client.GetFromJsonAsync<Order>(location);
+            foreach (CartItem orderitem in itemsToOrder)
+            {
+                currentOrderItem.Product_id = orderitem.Product.Id;
+                currentOrderItem.Product_Price = orderitem.Product.Price;
+                currentOrderItem.Product_Quantity = orderitem.Quantity;
+                currentOrderItem.Order_id = currentOrder.Id;
+                totalprice += currentOrderItem.Product_Price * currentOrderItem.Product_Quantity;
+                await _client.PostAsJsonAsync(Endpoints.OrderItemsEndpoint, currentOrderItem);
+                await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{orderitem.Id}");
+            }
+            currentOrder.Total_Price = totalprice;
+            await _client.PutAsJsonAsync(location, currentOrder);
+            _navManager.NavigateTo($"/mycart/orders/{currentOrder.Id}");
         }
-        currentOrder.Total_Price = totalprice;
-        await _client.PutAsJsonAsync(location, currentOrder);
-        _navManager.NavigateTo($"/mycart/orders/{currentOrder.Id}");
     }
-}
+    public void Dispose()
+    {
+	    _interceptor.DisposeEvent();
+    }
 }

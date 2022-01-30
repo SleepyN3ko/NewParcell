@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Syncfusion.Blazor" Version="19.3.0.56" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

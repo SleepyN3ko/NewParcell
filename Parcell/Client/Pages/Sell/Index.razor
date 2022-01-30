@@ -3,6 +3,8 @@
 @inject IJSRuntime js
 @attribute [Authorize]
 
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 
 
@@ -17,62 +19,62 @@
 
 else
 {
-<AuthorizeView Context="getName">
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Details</th>
-                    <th>Category</th>
-                    <th>Picture</th>
-                    <th>View product</th>
-                    <th>Edit product</th>
-                    <th>Delete product</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in Products)
-                {
-                    @if (product.Username == getName.User.Identity.Name)
+    <AuthorizeView Context="getName">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Details</th>
+                        <th>Category</th>
+                        <th>Picture</th>
+                        <th>View product</th>
+                        <th>Edit product</th>
+                        <th>Delete product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Products)
                     {
+                        @if (product.Username == getName.User.Identity.Name)
+                        {
 
-                <tr>
-                    <td>@product.Name</td>
-                    <td>
-                        <ul>
-                            <li>Description = @product.Description</li>
-                            <li>Stock = @product.Stock</li>
-                            <li>Price = @product.Price</li>
+                            <tr>
+                                <td>@product.Name</td>
+                                <td>
+                                    <ul>
+                                        <li>Description = @product.Description</li>
+                                        <li>Stock = @product.Stock</li>
+                                        <li>Price = @product.Price</li>
 
-                        </ul>
-                    </td>
-                    <td>@product.P_category</td>
-                    <td>
-                    <img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
-                    </td>
-                    <td>
-                        <a href="/buyswap/view/@product.Id" class="btn btn-info">
-                            <span class="oi oi-book"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/products/edit/@product.Id" class="btn btn-warning">
-                            <span class="oi oi-pencil"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
-                            <span class="oi oi-delete"></span>
-                        </button>
-                    </td>
-                </tr>
+                                    </ul>
+                                </td>
+                                <td>@product.P_category</td>
+                                <td>
+                                    <img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/missingImage.png'" alt="Missing Image" />
+                                </td>
+                                <td>
+                                    <a href="/buyswap/view/@product.Id" class="btn btn-info">
+                                        <span class="oi oi-book"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/products/edit/@product.Id" class="btn btn-warning">
+                                        <span class="oi oi-pencil"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="@(()=>Delete(product.Id))">
+                                        <span class="oi oi-delete"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-        </table>
-    </div>
-</AuthorizeView>
+                </tbody>
+            </table>
+        </div>
+    </AuthorizeView>
 }
 <button style="border-radius:20px;background-color:red;color:white;position:fixed;left:95%;top:90%;width:40px;height:40px;" onclick="location.href = '/products/create';">+</button>
 
@@ -85,6 +87,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
     }
 
@@ -98,6 +101,10 @@ else
             await _client.DeleteAsync($"{Endpoints.ProductsEndpoint}/{productId}");
             await OnInitializedAsync();
         }
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 
 }

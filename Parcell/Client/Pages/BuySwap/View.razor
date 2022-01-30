@@ -2,6 +2,9 @@
 @inject HttpClient _client
 @inject NavigationManager _navManager
 @using Parcell.Client.Pages.BuySwap
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
 
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
@@ -111,9 +114,11 @@
 
     protected async override Task OnParametersSetAsync()
     {
+        _interceptor.MonitorEvent();
         product = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{id}");
         wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
         carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
+
     }
 
     private async Task AddToWishList()
@@ -204,5 +209,9 @@
         await _client.PostAsJsonAsync($"{Endpoints.SwapsEndpoint}", swapdetails);
         swapDialogOpen = false;
         StateHasChanged();
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

@@ -1,7 +1,8 @@
 ﻿@page "/myswap/view/{id:int}"
 @inject HttpClient _client
 @inject NavigationManager _navManager
-
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
@@ -37,7 +38,7 @@
             <br />
             <button type="button" class="btn @productButtonColor" @onclick="@ToggleProductStatus" disabled="@disableProductButton">@productButtonText</button>
         </div>
-    </div>      
+    </div>
 }
 
 @code {
@@ -54,6 +55,7 @@
     public string message;
     protected async override Task OnParametersSetAsync()
     {
+        _interceptor.MonitorEvent();
         swap = await _client.GetFromJsonAsync<Swap>($"{Endpoints.SwapsEndpoint}/{id}");
         swap.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.SProduct_id}");
         swap.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.PProduct_id}");
@@ -112,5 +114,9 @@
             await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.SProduct.Id}", swap.SProduct);
         }
         StateHasChanged();
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

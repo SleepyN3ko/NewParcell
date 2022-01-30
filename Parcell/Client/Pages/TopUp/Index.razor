@@ -2,6 +2,8 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 @attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
@@ -31,6 +33,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
         foreach (var balance in balances)
         {
@@ -57,5 +60,9 @@ else
         currentBalance.Amount += amountToAdd;
         await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
         await OnInitializedAsync();
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

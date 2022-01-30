@@ -1,5 +1,7 @@
 ﻿@inject HttpClient _client
 @using Parcell.Client.Components
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <EditForm Model="@product" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
@@ -72,20 +74,20 @@
                 }
             </InputSelect>
             <ValidationMessage For="@(()=>product.S_Category)" />
-    </div>
-    <div class="form-group">
-        <label>Swap Description</label>
-        <div>
-            <InputText @bind-Value="product.Swap_description" class="form-control" />
-            <ValidationMessage For="@(()=>product.Swap_description)" />
         </div>
+        <div class="form-group">
+            <label>Swap Description</label>
+            <div>
+                <InputText @bind-Value="product.Swap_description" class="form-control" />
+                <ValidationMessage For="@(()=>product.Swap_description)" />
+            </div>
         </div>
     </div>
     <button type="submit" class="btn btn-success btn-block">
         @ButtonText
     </button>
 </EditForm>
-<BackToList Target="products"/>
+<BackToList Target="products" />
 @code {
     [Parameter] public Product product { get; set; }
     [Parameter] public string ButtonText { get; set; } = "Save";
@@ -94,6 +96,11 @@
     private IList<Category> Categories;
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         Categories = await _client.GetFromJsonAsync<List<Category>>($"{Endpoints.CategoriesEndpoint}");
+    }
+    public void Dispose()
+    {
+        _interceptor.DisposeEvent();
     }
 }

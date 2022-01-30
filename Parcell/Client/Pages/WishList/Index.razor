@@ -4,6 +4,9 @@
 @inject IJSRuntime js
 @inject NavigationManager _navManager
 @attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
@@ -13,7 +16,7 @@
 }
 else
 {
-    
+
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -78,6 +81,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        _interceptor.MonitorEvent();
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
         wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
         currentUserWishListId = -69;
@@ -109,12 +113,16 @@ else
     async Task RemoveFromWishList(int wishitemid, string productName)
     {
         var wishitem = wishlistitems.First(q => q.Id == wishitemid);
-        
+
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your wishlist?");
         if (confirm)
         {
             await _client.DeleteAsync($"{Endpoints.WishListItemEndpoint}/{wishitemid}");
             await OnInitializedAsync();
         }
+    }
+    public void Dispose()
+    {
+	    _interceptor.DisposeEvent();
     }
 }
