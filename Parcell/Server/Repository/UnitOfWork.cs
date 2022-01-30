@@ -19,12 +19,10 @@ namespace CarRentalManagement.Server.Repository
         private readonly ApplicationDbContext _context;
         private IGenericRepository<Category> _categories;
         private IGenericRepository<Order> _orders;
-        private IGenericRepository<OrderDetail> _orderdetails;
-        private IGenericRepository<PaymentDetail> _paymentdetails;
+        private IGenericRepository<OrderItem> _orderitems;
         private IGenericRepository<Product> _products;
-        private IGenericRepository<ProductCategory> _productcategories;
+        private IGenericRepository<Balance> _balances;
         private IGenericRepository<Swap> _swaps;
-        private IGenericRepository<SwapCategory> _swapcategories;
         private IGenericRepository<WishList> _wishlists;
         private IGenericRepository<WishListItem> _wishlistitems;
         private IGenericRepository<Cart> _carts;
@@ -44,18 +42,12 @@ namespace CarRentalManagement.Server.Repository
             => _categories ??= new GenericRepository<Category>(_context);
         public IGenericRepository<Order> Orders
             => _orders ??= new GenericRepository<Order>(_context);
-        public IGenericRepository<OrderDetail> OrderDetails
-            => _orderdetails ??= new GenericRepository<OrderDetail>(_context);
-        public IGenericRepository<PaymentDetail> PaymentDetails
-            => _paymentdetails ??= new GenericRepository<PaymentDetail>(_context);
+        public IGenericRepository<OrderItem> OrderItems
+            => _orderitems ??= new GenericRepository<OrderItem>(_context);
         public IGenericRepository<Product> Products
             => _products ??= new GenericRepository<Product>(_context);
-        public IGenericRepository<ProductCategory> ProductCategories
-            => _productcategories ??= new GenericRepository<ProductCategory>(_context);
         public IGenericRepository<Swap> Swaps
             => _swaps ??= new GenericRepository<Swap>(_context);
-        public IGenericRepository<SwapCategory> SwapCategories
-            => _swapcategories ??= new GenericRepository<SwapCategory>(_context);
         public IGenericRepository<WishList> WishLists
             => _wishlists ??= new GenericRepository<WishList>(_context);
         public IGenericRepository<WishListItem> WishListItems
@@ -64,6 +56,8 @@ namespace CarRentalManagement.Server.Repository
             => _carts ??= new GenericRepository<Cart>(_context);
         public IGenericRepository<CartItem> CartItems
             => _cartitems ??= new GenericRepository<CartItem>(_context);
+        public IGenericRepository<Balance> Balances
+            => _balances ??= new GenericRepository<Balance>(_context);
 
 
         public void Dispose()

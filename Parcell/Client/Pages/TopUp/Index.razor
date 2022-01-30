@@ -1,0 +1,61 @@
+﻿@page "/topup"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+
+@if (finished == false)
+{
+    <div class="alert alert-info">Loading Balance...</div>
+}
+else
+{
+    <label><strong>Amount: </strong></label>
+    <input type="number" @bind-value="@amountToAdd" />
+    <br />
+    <button class="btn btn-round" style="background-color:green;color:white" type="button" @onclick="()=>addBalance()"><span class="oi oi-loop"></span>Add Balance</button>
+    <br />
+    <b>Your Balance: </b>@currentBalance.Amount
+}
+@code {
+
+    private List<Balance> balances;
+    private Balance currentBalance = new Balance();
+    private int balanceid = -69;
+    public string username;
+    public int amountToAdd;
+    public Boolean finished = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
+        foreach (var balance in balances)
+        {
+            if (balance.Username == username)
+            {
+                currentBalance = balance;
+                balanceid = balance.Id;
+            }
+        }
+        if (balanceid == -69)
+        {
+            currentBalance.Username = username;
+            var response = await _client.PostAsJsonAsync(Endpoints.BalancesEndpoint, currentBalance);
+            string location = response.Headers.Location.AbsoluteUri;
+            currentBalance = await _client.GetFromJsonAsync<Balance>($"{location}");
+            balanceid = currentBalance.Id;
+        }
+        finished = true;
+        StateHasChanged();
+    }
+
+    async Task addBalance()
+    {
+        currentBalance.Amount += amountToAdd;
+        await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
+        await OnInitializedAsync();
+    }
+}

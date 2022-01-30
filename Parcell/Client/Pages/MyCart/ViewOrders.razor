@@ -1,0 +1,153 @@
+﻿@page "/mycart/orders/{id:int}"
+
+@inject HttpClient _client
+@inject IJSRuntime js
+@inject NavigationManager _navManager
+@attribute [Authorize]
+
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (!finished)
+{
+    <h1>Loading your orders...</h1>
+}
+else
+{
+    <h1>Order #@currentOrder.Id</h1>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Image</th>
+                    <th>Product Quantity</th>
+                    <th>Product Price(each)</th>
+                    <th>View Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var orderitem in orderitems)
+                {
+                    @if (id == orderitem.Order_id)
+                    {
+                        <tr>
+                            <td>@orderitem.Product.Name</td>
+                            <td>
+                                <img style="width:80px;height:80px" src="@orderitem.Product.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                            </td>
+                            <td>@orderitem.Product_Quantity</td>
+                            <td>@orderitem.Product_Price</td>
+                            <td>
+                                <a href="/buyswap/view/@orderitem.Product.Id" class="btn btn-info">
+                                    <span class="oi oi-book"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    @if (currentOrder.Status == false) {
+        <button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;"
+        @onclick="@payForOrder">
+            Pay
+        </button> }
+    
+
+    <button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
+            onclick="location.href = '/mycart/orders';">
+        View Orders
+    </button>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private List<OrderItem> orderitems;
+    public List<Product> products;
+    public Order currentOrder;
+    private List<Balance> balances;
+    private Balance currentBalance = new Balance();
+    private int balanceid = -69;
+    public Product currentProduct;
+    public string username;
+    Boolean finished;
+    protected async override Task OnInitializedAsync()
+    {
+        finished = false;
+        orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
+        currentOrder = await _client.GetFromJsonAsync<Order>($"{Endpoints.OrdersEndpoint}/{id}");
+        products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        foreach (var orderitem in orderitems)
+        {
+            foreach (var product in products)
+            {
+                if (orderitem.Product_id == product.Id)
+                {
+                    orderitem.Product = product;
+                }
+            }
+        }
+
+        balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
+        foreach (var balance in balances)
+        {
+            if (balance.Username == username)
+            {
+                currentBalance = balance;
+                balanceid = balance.Id;
+            }
+        }
+        if (balanceid == -69)
+        {
+            currentBalance.Username = username;
+            var response = await _client.PostAsJsonAsync(Endpoints.BalancesEndpoint, currentBalance);
+            string location = response.Headers.Location.AbsoluteUri;
+            currentBalance = await _client.GetFromJsonAsync<Balance>($"{location}");
+            balanceid = currentBalance.Id;
+        }
+        finished = true;
+    }
+    async Task payForOrder()
+    {
+        if (currentBalance.Amount >= currentOrder.Total_Price)
+        {
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to pay for Order #{currentOrder.Id}?");
+            if (confirm)
+            {
+                currentOrder.Status = true;
+                //change currentOrder to paid status
+                await _client.PutAsJsonAsync($"{Endpoints.OrdersEndpoint}/{currentOrder.Id}", currentOrder);
+                currentBalance.Amount -= currentOrder.Total_Price;
+                //remove amount used to pay to orderitem owners
+                await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
+                //move the deducted balance to orderitem owners
+                foreach (var orderitem in orderitems)
+                {
+                    if (orderitem.Order_id == currentOrder.Id)
+                    {
+                        currentProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{orderitem.Product_id}");
+                        Balance balance = balances.First(q => q.Username == currentProduct.Username);
+                        balance.Amount += orderitem.Product_Price * orderitem.Product_Quantity;
+                        await _client.PutAsJsonAsync<Balance>($"{Endpoints.BalancesEndpoint}/{balance.Id}",balance);
+                        currentProduct.Stock -= orderitem.Product_Quantity;
+                        await _client.PutAsJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{currentProduct.Id}",currentProduct);
+                    }
+                }
+                _navManager.NavigateTo("mycart/orders");
+            }
+
+        }
+        else
+        {
+            var confirm = await js.InvokeAsync<bool>("topup", $"Your account has insufficient balance to pay for this order. Please go topup");
+            if (confirm)
+            {
+                _navManager.NavigateTo("topup");
+            }
+        }
+    }
+}

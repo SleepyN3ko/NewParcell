@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Parcell.Shared.Domain
 {
-    public class PaymentDetail
+    public class Balance
     {
         public int Id { get; set; }
-        public int TotalPrice { get; set; }
+        public int Amount { get; set; }
         public string Username { get; set; }
-
     }
 }

@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 namespace Parcell.Shared.Domain
 {
-    public class CartItem
+    public class OrderItem
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public Boolean Status { get; set; }
-        public int Quantity { get; set; }
-
         public int Product_id { get; set; }
+        public int Product_Price { get; set; }
+        public int Product_Quantity { get; set; }
         public virtual Product Product { get; set; }
-        public int Cart_id { get; set; }
-        public virtual Cart Cart { get; set; }
 
+        public int Order_id { get; set; }
+        public virtual Order Order { get; set; }
     }
 }

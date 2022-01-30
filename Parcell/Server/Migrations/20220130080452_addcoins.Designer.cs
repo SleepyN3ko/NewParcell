@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220125065641_removedRedundentData")]
-    partial class removedRedundentData
+    [Migration("20220130080452_addcoins")]
+    partial class addcoins
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -348,6 +348,31 @@ namespace Parcell.Server.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Parcell.Shared.Domain.Balance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Balances");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 0
+                        });
+                });
+
             modelBuilder.Entity("Parcell.Shared.Domain.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -396,6 +421,9 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("Product_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -414,6 +442,7 @@ namespace Parcell.Server.Migrations
                             Cart_id = 0,
                             Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Product_id = 0,
+                            Quantity = 0,
                             Status = false
                         });
                 });
@@ -469,16 +498,10 @@ namespace Parcell.Server.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ETA")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Stock")
+                    b.Property<int>("Total_Price")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -489,53 +512,38 @@ namespace Parcell.Server.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.OrderDetail", b =>
+            modelBuilder.Entity("Parcell.Shared.Domain.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("PaymentDetailsId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Price")
+                    b.Property<int>("Order_id")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("Product_Price")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Product_Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Product_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PaymentDetailsId");
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.PaymentDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentDetails");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.Product", b =>
@@ -607,28 +615,6 @@ namespace Parcell.Server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.ProductCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductCategories");
-                });
-
             modelBuilder.Entity("Parcell.Shared.Domain.Swap", b =>
                 {
                     b.Property<int>("Id")
@@ -648,6 +634,9 @@ namespace Parcell.Server.Migrations
                     b.Property<int>("PProduct_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("PProduct_quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
 
@@ -655,6 +644,9 @@ namespace Parcell.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("SProduct_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SProduct_quantity")
                         .HasColumnType("int");
 
                     b.Property<bool>("SStatus")
@@ -667,31 +659,6 @@ namespace Parcell.Server.Migrations
                     b.HasIndex("SProductId");
 
                     b.ToTable("Swaps");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.SwapCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("SwapCategories");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishList", b =>
@@ -830,32 +797,17 @@ namespace Parcell.Server.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Parcell.Shared.Domain.OrderDetail", b =>
+            modelBuilder.Entity("Parcell.Shared.Domain.OrderItem", b =>
                 {
-                    b.HasOne("Parcell.Shared.Domain.PaymentDetail", "PaymentDetails")
+                    b.HasOne("Parcell.Shared.Domain.Order", "Order")
                         .WithMany()
-                        .HasForeignKey("PaymentDetailsId");
+                        .HasForeignKey("OrderId");
 
                     b.HasOne("Parcell.Shared.Domain.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.Navigation("PaymentDetails");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.ProductCategory", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.HasOne("Parcell.Shared.Domain.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Category");
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -873,21 +825,6 @@ namespace Parcell.Server.Migrations
                     b.Navigation("PProduct");
 
                     b.Navigation("SProduct");
-                });
-
-            modelBuilder.Entity("Parcell.Shared.Domain.SwapCategory", b =>
-                {
-                    b.HasOne("Parcell.Shared.Domain.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.HasOne("Parcell.Shared.Domain.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Parcell.Shared.Domain.WishListItem", b =>

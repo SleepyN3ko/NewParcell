@@ -3,7 +3,9 @@
 @inject NavigationManager _navManager
 @using Parcell.Client.Pages.BuySwap
 
-
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
 <body>
 
     <link rel="stylesheet" type="text/css" href="/css/Sell.css" />
@@ -25,38 +27,58 @@
                         </h4>
                         <hr />
                         <p>
+                            <strong>Product description:</strong><br>
                             @product.Description
                         </p>
                         <div class="product_meta">
-                            <span class="posted_in"> <strong>Categories:</strong><a>@product.P_category</a></span>
+                            <span class="posted_in"> <strong>Categories: </strong><a>@product.P_category</a></span>
                         </div>
-                        <div class="m-bot15"> <strong>Price : </strong><span class="price">@product.Price</span></div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" placeholder="1" class="col-md-3 form-control">
+                        <div class="m-bot15">
+                            <strong>Price: </strong><span class="price">@product.Price</span>
                         </div>
-                        <AuthorizeView Context="getName">
-                            @{ username = getName.User.Identity.Name;}
-                        </AuthorizeView>
+                        <br style="line-height: 300px;">
                         @if (username != product.Username)
                         {
                             <p>
-                                <button class="btn btn-round btn-danger" type="button" @onclick="AddToCart"><span class="oi oi-cart" />Add to Cart</button>
+                                <button class="btn btn-round btn-info" type="button" @onclick="AddToWishList"><span class="oi oi-star" />Add product to wishlist</button>
                             </p>
+                        }
+                        @if (product.S_Category != "noswap")
+                        {
                             <p>
-                                <button class="btn btn-round btn-info" type="button" @onclick="AddToWishList"><span class="oi oi-star" />Add to wishlist</button>
+                                <strong>Swap description:</strong><br>
+                                @product.Swap_description
                             </p>
-                            if (product.S_Category != "noswap")
+                            <div class="product_meta">
+                                <span class="posted_in"> <strong>Swap Categories: </strong><a>@product.S_Category</a></span>
+                            </div>
+                            @if (username != product.Username)
                             {
                                 <p>
-                                    <button class="btn btn-round" style="background-color:greenyellow;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-cart"></span> Add to Swap</button>
+                                    <button class="btn btn-round" style="background-color:green;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-loop"></span>Send Swap Request</button>
                                 </p>
+                                @if (swapDialogOpen)
+                                {
+                                    <SwapDialog swapdetails="@swapdetails" Title="Add Swap Product" s_Username="@username" product="@product" OnClose="@CloseSwapDialog" OnValidSubmit="@PostSwap" ButtonText="Send Swap Request" />
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <a>Not willing to Swap</a>
+                        }
+                        <br style="line-height: 300px;">
 
-                            }
-                            @if (swapDialogOpen)
-                            {
-                                <SwapDialog swapdetails="@swapdetails" Title="Add Swap Product" s_Username="@username" product="@product" OnClose="@CloseSwapDialog" OnValidSubmit="@PostSwap" ButtonText="Send Swap Request" />
-                            }
+                        @if (username != product.Username)
+                        {
+                            <div class="form-group">
+                                <label style="display:inline"><strong>Stock:</strong>@product.Stock</label>
+                                <label><strong>Quantity: </strong></label>
+                                <input type="number" @bind-value="@cartitem.Quantity" />
+                            </div>
+                            <p>
+                                <button class="btn btn-round btn-danger" type="button" @onclick="AddToCart"><span class="oi oi-cart" />Add to Cart</button>
+                            </p>
                         }
                     </div>
                 </div>
@@ -84,6 +106,8 @@
     private List<Cart> carts;
     private Cart addNewCart = new Cart();
     private Cart currentCart;
+    public CartItem currentcartitem;
+
 
     protected async override Task OnParametersSetAsync()
     {
@@ -95,7 +119,8 @@
     private async Task AddToWishList()
     {
         currentUserWishListId = -69;
-        foreach (WishList wishlist in wishlists) {
+        foreach (WishList wishlist in wishlists)
+        {
             if (wishlist.Username == username)
             {
                 currentUserWishListId = wishlist.Id;
@@ -133,7 +158,8 @@
     private async Task AddToCart()
     {
         currentUserCartId = -69;
-        foreach (Cart cart in carts){
+        foreach (Cart cart in carts)
+        {
             if (cart.Username == username)
             {
                 currentUserCartId = cart.Id;
@@ -179,4 +205,4 @@
         swapDialogOpen = false;
         StateHasChanged();
     }
-    }
+}

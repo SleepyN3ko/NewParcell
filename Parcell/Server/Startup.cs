@@ -16,6 +16,7 @@ using CarRentalManagement.Server.Repository;
 using Parcell.Client.Components;
 
 
+
 namespace Parcell.Server
 {
     public class Startup
@@ -52,6 +53,7 @@ namespace Parcell.Server
                 .AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages(); 
             services.AddHttpContextAccessor();
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
