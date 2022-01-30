@@ -72,6 +72,7 @@
                         @if (username != product.Username)
                         {
                             <div class="form-group">
+                                <label style="display:inline"><strong>Stock:</strong>@product.Stock</label>
                                 <label><strong>Quantity: </strong></label>
                                 <input type="number" @bind-value="@cartitem.Quantity" />
                             </div>

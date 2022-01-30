@@ -5,7 +5,95 @@
 @inject NavigationManager _navManager
 @attribute [Authorize]
 
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (!finished)
+{
+    <h1>Loading your orders...</h1>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>OrderID</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                    <th>View Order</th>
+                    <th>Delete Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    @if (order.Username == username)
+                    {
+                        <tr>
+                            <td>#@order.Id</td>
+                            @if (order.Status)
+                            {
+                                <td>Paid</td>
+                            }
+                            else
+                            {
+                                <td>Not Paid</td>
+                            }
+                            <td>@order.Total_Price</td>
+                            <td>
+                                <a href="/mycart/orders/@order.Id" class="btn btn-info">
+                                    <span class="oi oi-book"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(()=>RemoveOrder(order.Id))">
+                                    <span class="oi oi-delete"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
+        onclick="location.href = '/mycart';">
+    View MyCart
+</button>
 @code {
-    private List<Product> Products;
     private List<Order> orders;
+    private List<OrderItem> orderitems;
+    public string username;
+    Boolean finished;
+    protected async override Task OnInitializedAsync()
+    {
+        finished = false;
+        orders = await _client.GetFromJsonAsync<List<Order>>($"{Endpoints.OrdersEndpoint}");
+        orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
+        finished = true;
+    }
+    async Task RemoveOrder(int orderid)
+    {
+        var order = orders.First(q => q.Id == orderid);
+
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove Order #{orderid} from your cart?");
+        if (confirm)
+        {
+            //remove the order and all its related orderitems
+            await _client.DeleteAsync($"{Endpoints.OrdersEndpoint}/{orderid}");
+            foreach (var orderitem in orderitems)
+            {
+                if (orderitem.Order_id == orderid)
+                {
+                    await _client.DeleteAsync($"{Endpoints.OrderItemsEndpoint}/{orderitem.Id}");
+                }
+            }
+            await OnInitializedAsync();
+        }
+    }
 }

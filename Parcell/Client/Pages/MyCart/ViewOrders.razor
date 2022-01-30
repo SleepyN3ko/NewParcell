@@ -1,0 +1,84 @@
+﻿@page "/mycart/orders/{id:int}"
+
+@inject HttpClient _client
+@inject IJSRuntime js
+@inject NavigationManager _navManager
+@attribute [Authorize]
+
+<AuthorizeView Context="getName">
+    @{ username = getName.User.Identity.Name;}
+</AuthorizeView>
+@if (!finished)
+{
+    <h1>Loading your orders...</h1>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Image</th>
+                    <th>Product Quantity</th>
+                    <th>Product Price(each)</th>
+                    <th>View Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var orderitem in orderitems)
+                {
+                    @if (id == orderitem.Order_id)
+                    {
+                        <tr>
+                            <td>@orderitem.Product.Name</td>
+                            <td>
+                                <img style="width:80px;height:80px" src="@orderitem.Product.Image" onerror="this.onerror = null;this.src='/css/imageNotFound.png'" alt="Missing Image" />
+                            </td>
+                            <td>@orderitem.Product_Quantity</td>
+                            <td>@orderitem.Product_Price</td>
+                            <td>
+                                <a href="/buyswap/view/@orderitem.Product.Id" class="btn btn-info">
+                                    <span class="oi oi-book"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
+        onclick="location.href = '/mycart/orders';">
+    View Checkout
+</button>
+@code {
+    [Parameter] public int id { get; set; }
+    private List<OrderItem> orderitems;
+    public List<Product> products;
+    public Order currentOrder;
+    public Product currentProduct;
+    public string username;
+    Boolean finished;
+    protected async override Task OnInitializedAsync()
+    {
+        finished = false;
+        orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
+        currentOrder = await _client.GetFromJsonAsync<Order>($"{Endpoints.OrdersEndpoint}/{id}");
+        products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        foreach (var orderitem in orderitems)
+        {
+            foreach (var product in products)
+            {
+                if (orderitem.Product_id == product.Id)
+                {
+                    orderitem.Product = product;
+                }
+            }
+        }
+        finished = true;
+    }
+}

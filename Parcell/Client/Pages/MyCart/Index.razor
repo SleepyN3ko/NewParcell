@@ -150,24 +150,29 @@ async Task RemoveFromCart(int cartitemid, string productName)
 }
 async Task addToOrders()
 {
-
-    currentOrder.Username = username;
-    currentOrder.Status = false;
-    currentOrder.Date = DateTime.Now;
-    totalprice = 0;
-    var response = await _client.PostAsJsonAsync(Endpoints.OrdersEndpoint, currentOrder);
-    string location = response.Headers.Location.AbsoluteUri;
-    currentOrder = await _client.GetFromJsonAsync<Order>(location);
-    foreach (CartItem orderitem in itemsToOrder)
+    //only make an order if list is not empty
+    if (itemsToOrder.Any())
     {
-        currentOrderItem.Product_id = orderitem.Product.Id;
-        currentOrderItem.Product_Price = orderitem.Product.Price;
-        currentOrderItem.Product_Quantity = orderitem.Quantity;
-        currentOrderItem.Order_id = currentOrder.Id;
-        totalprice += currentOrderItem.Product_Price * currentOrderItem.Product_Quantity;
-        await _client.PostAsJsonAsync(Endpoints.OrderItemsEndpoint, currentOrderItem);
+        currentOrder.Username = username;
+        currentOrder.Status = false;
+        currentOrder.Date = DateTime.Now;
+        totalprice = 0;
+        var response = await _client.PostAsJsonAsync(Endpoints.OrdersEndpoint, currentOrder);
+        string location = response.Headers.Location.AbsoluteUri;
+        currentOrder = await _client.GetFromJsonAsync<Order>(location);
+        foreach (CartItem orderitem in itemsToOrder)
+        {
+            currentOrderItem.Product_id = orderitem.Product.Id;
+            currentOrderItem.Product_Price = orderitem.Product.Price;
+            currentOrderItem.Product_Quantity = orderitem.Quantity;
+            currentOrderItem.Order_id = currentOrder.Id;
+            totalprice += currentOrderItem.Product_Price * currentOrderItem.Product_Quantity;
+            await _client.PostAsJsonAsync(Endpoints.OrderItemsEndpoint, currentOrderItem);
+            await _client.DeleteAsync($"{Endpoints.CartItemEndpoint}/{orderitem.Id}");
+        }
+        currentOrder.Total_Price = totalprice;
+        await _client.PutAsJsonAsync(location, currentOrder);
+        _navManager.NavigateTo($"/mycart/orders/{currentOrder.Id}");
     }
-    currentOrder.Total_Price = totalprice;
-    await _client.PutAsJsonAsync(location, currentOrder);
 }
 }
