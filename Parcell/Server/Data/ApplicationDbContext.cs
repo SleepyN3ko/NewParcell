@@ -23,6 +23,7 @@ namespace Parcell.Server.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Balance> Balances { get; set; }
         public DbSet<Swap> Swaps { get; set; }
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<WishListItem> WishListItems { get; set; }
@@ -40,7 +41,9 @@ namespace Parcell.Server.Data
             builder.ApplyConfiguration(new WishListSeedConfiguration());
             builder.ApplyConfiguration(new CartItemSeedConfiguration());
             builder.ApplyConfiguration(new CartSeedConfiguration());
+            builder.ApplyConfiguration(new BalanceSeedConfiguration());
         }
+
 
 
     }

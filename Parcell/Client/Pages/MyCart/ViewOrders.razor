@@ -14,6 +14,7 @@
 }
 else
 {
+    <h1>Order #@currentOrder.Id</h1>
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -50,16 +51,27 @@ else
             </tbody>
         </table>
     </div>
+    @if (currentOrder.Status == false) {
+        <button style="background-color: #4CAF50; color: white; position: fixed; left: 85%; top: 90%; width: 200px; height: 40px;"
+        @onclick="@payForOrder">
+            Pay
+        </button> }
+    
+
+    <button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
+            onclick="location.href = '/mycart/orders';">
+        View Orders
+    </button>
 }
-<button style="background-color: #008CBA; color: white; position: fixed; left: 85%; top: 95%; width: 200px; height: 40px;"
-        onclick="location.href = '/mycart/orders';">
-    View Checkout
-</button>
+
 @code {
     [Parameter] public int id { get; set; }
     private List<OrderItem> orderitems;
     public List<Product> products;
     public Order currentOrder;
+    private List<Balance> balances;
+    private Balance currentBalance = new Balance();
+    private int balanceid = -69;
     public Product currentProduct;
     public string username;
     Boolean finished;
@@ -79,6 +91,63 @@ else
                 }
             }
         }
+
+        balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
+        foreach (var balance in balances)
+        {
+            if (balance.Username == username)
+            {
+                currentBalance = balance;
+                balanceid = balance.Id;
+            }
+        }
+        if (balanceid == -69)
+        {
+            currentBalance.Username = username;
+            var response = await _client.PostAsJsonAsync(Endpoints.BalancesEndpoint, currentBalance);
+            string location = response.Headers.Location.AbsoluteUri;
+            currentBalance = await _client.GetFromJsonAsync<Balance>($"{location}");
+            balanceid = currentBalance.Id;
+        }
         finished = true;
+    }
+    async Task payForOrder()
+    {
+        if (currentBalance.Amount >= currentOrder.Total_Price)
+        {
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to pay for Order #{currentOrder.Id}?");
+            if (confirm)
+            {
+                currentOrder.Status = true;
+                //change currentOrder to paid status
+                await _client.PutAsJsonAsync($"{Endpoints.OrdersEndpoint}/{currentOrder.Id}", currentOrder);
+                currentBalance.Amount -= currentOrder.Total_Price;
+                //remove amount used to pay to orderitem owners
+                await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
+                //move the deducted balance to orderitem owners
+                foreach (var orderitem in orderitems)
+                {
+                    if (orderitem.Order_id == currentOrder.Id)
+                    {
+                        currentProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{orderitem.Product_id}");
+                        Balance balance = balances.First(q => q.Username == currentProduct.Username);
+                        balance.Amount += orderitem.Product_Price * orderitem.Product_Quantity;
+                        await _client.PutAsJsonAsync<Balance>($"{Endpoints.BalancesEndpoint}/{balance.Id}",balance);
+                        currentProduct.Stock -= orderitem.Product_Quantity;
+                        await _client.PutAsJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{currentProduct.Id}",currentProduct);
+                    }
+                }
+                _navManager.NavigateTo("mycart/orders");
+            }
+
+        }
+        else
+        {
+            var confirm = await js.InvokeAsync<bool>("topup", $"Your account has insufficient balance to pay for this order. Please go topup");
+            if (confirm)
+            {
+                _navManager.NavigateTo("topup");
+            }
+        }
     }
 }

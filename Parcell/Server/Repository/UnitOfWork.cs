@@ -21,6 +21,7 @@ namespace CarRentalManagement.Server.Repository
         private IGenericRepository<Order> _orders;
         private IGenericRepository<OrderItem> _orderitems;
         private IGenericRepository<Product> _products;
+        private IGenericRepository<Balance> _balances;
         private IGenericRepository<Swap> _swaps;
         private IGenericRepository<WishList> _wishlists;
         private IGenericRepository<WishListItem> _wishlistitems;
@@ -55,6 +56,8 @@ namespace CarRentalManagement.Server.Repository
             => _carts ??= new GenericRepository<Cart>(_context);
         public IGenericRepository<CartItem> CartItems
             => _cartitems ??= new GenericRepository<CartItem>(_context);
+        public IGenericRepository<Balance> Balances
+            => _balances ??= new GenericRepository<Balance>(_context);
 
 
         public void Dispose()

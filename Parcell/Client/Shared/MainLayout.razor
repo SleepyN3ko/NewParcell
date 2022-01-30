@@ -4,55 +4,54 @@
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-
-
+@inject HttpClient _client
 
 
 <div class="page">
     <div class="main">
         <div class="top-row px-4 auth bg-dark">
-            <ul class="nav flex-row">
-                <li>
-                    <a style="position:fixed;top:4px; left:0;" href=""><img src="Parcell2.ico" width=90></a>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="buyswap" style="display:inline">
-                        <span class="oi oi-dollar" aria-hidden="true"></span> Buy/Swap
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="products" style="display:inline">
-                        <span class="oi oi-dollar" aria-hidden="true"></span> Sell
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="wishlist" style="display:inline">
-                        <span class="oi oi-star" aria-hidden="true"></span> Wishlist
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="myswap" style="display:inline">
-                        <span class="oi oi-cart" aria-hidden="true"></span> My Swap
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link text-light" href="mycart" style="display:inline">
-                        <span class="oi oi-cart" aria-hidden="true"></span> My Cart
-                    </NavLink>
-                </li>
-            </ul>
-            <AuthorizeView>
-                <Authorized>
-                    <a class="nav-link text-light" href="authentication/profile"><span class="oi oi-person"/> @context.User.Identity.Name</a>
-                    <a class="nav-link btn btn-link text-light" @onclick="BeginSignOut"><span class="oi oi-account-logout"/>Log out</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a class="nav-link text-light" href="authentication/register"><span class="oi oi-person"/>Register</a>
-                    <a class="nav-link text-light" href="authentication/login"><span class="oi oi-account-login"/>Log in</a>
-                </NotAuthorized>
-            </AuthorizeView>
+                <ul class="nav flex-row">
+                    <li>
+                        <a style="position:fixed;top:4px; left:0;" href=""><img src="Parcell2.ico" width=90></a>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-light" href="buyswap" style="display:inline">
+                            <span class="oi oi-dollar" aria-hidden="true"></span> Buy/Swap
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-light" href="products" style="display:inline">
+                            <span class="oi oi-dollar" aria-hidden="true"></span> Sell
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-light" href="wishlist" style="display:inline">
+                            <span class="oi oi-star" aria-hidden="true"></span> Wishlist
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-light" href="myswap" style="display:inline">
+                            <span class="oi oi-cart" aria-hidden="true"></span> My Swap
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-light" href="mycart" style="display:inline">
+                            <span class="oi oi-cart" aria-hidden="true"></span> My Cart
+                        </NavLink>
+                    </li>
+                </ul>
+                <AuthorizeView>
+                    <Authorized>
+                        <a class="nav-link text-light" href="topup">TopUp</a>
+                        <a class="nav-link text-light" href="authentication/profile"><span class="oi oi-person" /> @context.User.Identity.Name</a>
+                        <a class="nav-link btn btn-link text-light" @onclick="BeginSignOut"><span class="oi oi-account-logout" />Log out</a>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a class="nav-link text-light" href="authentication/register"><span class="oi oi-person" />Register</a>
+                        <a class="nav-link text-light" href="authentication/login"><span class="oi oi-account-login" />Log in</a>
+                    </NotAuthorized>
+                </AuthorizeView>
         </div>
-
         <div class="content">
             @Body
 
@@ -60,14 +59,14 @@
     </div>
 </div>
 
-@code{
 
+@code{
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
-
+    public Boolean finished = false;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -81,4 +80,7 @@
     }
 
     string GetActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix) => IsActive(href, navLinkMatch) ? "active" : "";
+
+
+    
 }

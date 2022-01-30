@@ -12,6 +12,7 @@ namespace Parcell.Server.IRepository
         Task Save(HttpContext httpContext);
         IGenericRepository<Product> Products { get; }
         IGenericRepository<Category> Categories { get; }
+        IGenericRepository<Balance> Balances { get; }
         IGenericRepository<Order> Orders { get; }
         IGenericRepository<OrderItem> OrderItems { get; }
         IGenericRepository<Swap> Swaps { get; }
