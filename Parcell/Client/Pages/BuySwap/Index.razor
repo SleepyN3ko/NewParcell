@@ -9,7 +9,7 @@
 
 
 
-@if (Products == null)
+@if (finished == false)
 {
     <div class="alert alert-info">Loading Products...</div>
 }
@@ -20,7 +20,7 @@ else
     <AuthorizeView Context="getName">
         <Authorized>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="productsTable">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -99,17 +99,39 @@ else
 
 
 @code {
-    public int count;
 
     private List<Product> Products;
+    public List<string> selected_P_Category = new List<string>();
+    public List<string> selected_S_Category = new List<string>();
+    public Boolean finished = false;
 
     protected async override Task OnInitializedAsync()
     {
         _interceptor.MonitorEvent();
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        foreach (var product in Products)
+        {
+            if (!selected_P_Category.Contains(product.P_category) && selected_P_Category.Any())
+            {
+                Products.Remove(product);
+            }
+        }
+        foreach (var product in Products)
+        {
+            if (!selected_S_Category.Contains(product.S_Category) && selected_S_Category.Any())
+            {
+                Products.Remove(product);
+            }
+        }
+        finished = true;
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#productsTable");
     }
     public void Dispose()
     {
+        js.InvokeVoidAsync("DataTablesDispose", "#productsTable");
         _interceptor.DisposeEvent();
     }
 }
