@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class getdb : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,6 +52,20 @@ namespace Parcell.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Balances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Balances", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -406,6 +420,11 @@ namespace Parcell.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Balances",
+                columns: new[] { "Id", "Amount", "Username" },
+                values: new object[] { 1, 0, null });
+
+            migrationBuilder.InsertData(
                 table: "CartItems",
                 columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Quantity", "Status" },
                 values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, 0, false });
@@ -566,6 +585,9 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Balances");
 
             migrationBuilder.DropTable(
                 name: "CartItems");

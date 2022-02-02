@@ -5,9 +5,7 @@
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
 
-
-
-
+<link rel="stylesheet" type="text/css" href="/css/Sell.css" />
 
 @if (finished == false)
 {
@@ -19,6 +17,7 @@ else
 {
     <AuthorizeView Context="getName">
         <Authorized>
+            <a2>All products for sale</a2>
             <div class="table-responsive">
                 <table class="table" id="productsTable">
                     <thead>

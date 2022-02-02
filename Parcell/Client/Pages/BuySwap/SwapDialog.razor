@@ -15,21 +15,7 @@
                 <EditForm EditContext="editContext" OnValidSubmit="@OnValidSubmit">
                     <DataAnnotationsValidator />
                     <div class="form-group">
-                        <label title="How much you swapping">My product quantity</label>
-                        <div>
-                            <InputNumber @bind-Value="swapdetails.SProduct_quantity" class="form-control" />
-                            <ValidationMessage For="@(()=>swapdetails.SProduct_quantity)" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label title="How much you want to get">Their product Quantity</label>
-                        <div>
-                            <InputNumber @bind-Value="swapdetails.PProduct_quantity" class="form-control" />
-                            <ValidationMessage For="@(()=>swapdetails.PProduct_quantity)" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Choose your product for swap</label>
+                        <label>Choose your product to swap with</label>
                         <div>
                             <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
                                 @if (Products != null)
@@ -55,6 +41,20 @@
                                 }
                             </InputSelect>
                             <ValidationMessage For="@(()=>swapdetails.SProduct_id)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label title="How much you swapping">My product quantity</label>
+                        <div>
+                            <InputNumber @bind-Value="swapdetails.SProduct_quantity" class="form-control" />
+                            <ValidationMessage For="@(()=>swapdetails.SProduct_quantity)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label title="How much you want to get">Their product quantity</label>
+                        <div>
+                            <InputNumber @bind-Value="swapdetails.PProduct_quantity" class="form-control" />
+                            <ValidationMessage For="@(()=>swapdetails.PProduct_quantity)" />
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success btn-block" disabled="@disable_button">

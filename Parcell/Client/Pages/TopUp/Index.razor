@@ -15,12 +15,12 @@
 }
 else
 {
-    <label><strong>Amount: </strong></label>
+    <b style="font-size: 18px; ">Hello @username, your current balance is @currentBalance.Amount .</b>
+    <br /><br />
+    <label><strong>Amount to add: </strong></label>
     <input type="number" @bind-value="@amountToAdd" />
-    <br />
-    <button class="btn btn-round" style="background-color:green;color:white" type="button" @onclick="()=>addBalance()"><span class="oi oi-loop"></span>Add Balance</button>
-    <br />
-    <b>Your Balance: </b>@currentBalance.Amount
+    <br /><br />
+    <button class="btn btn-round" style="right:100px; background-color:green;color:white" type="button" @onclick="()=>addBalance()"><span class="oi oi-plus"></span>Add Balance</button>
 }
 @code {
 
