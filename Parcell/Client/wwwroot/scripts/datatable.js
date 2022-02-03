@@ -10,3 +10,6 @@ function DataTablesDispose(table) {
 		element.parentNode.removeChild(element);
 	})
 }
+window.GetMultiSelect = function (select) {
+	$(select).multiselect();
+}
