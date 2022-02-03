@@ -31,7 +31,7 @@
                     </li>
                     <li class="nav-item">
                         <NavLink class="nav-link text-light" href="myswap" style="display:inline">
-                            <span class="oi oi-cart" aria-hidden="true"></span> My Swap
+                            <span class="oi oi-loop" aria-hidden="true"></span> My Swap
                         </NavLink>
                     </li>
                     <li class="nav-item">
@@ -42,7 +42,8 @@
                 </ul>
                 <AuthorizeView>
                     <Authorized>
-                        <a class="nav-link text-light" href="topup">TopUp</a>
+                        <a class="nav-link text-light" href="topup">
+                            <span class="oi oi-arrow-circle-top" aria-hidden="true"></span> Top Up</a>
                         <a class="nav-link text-light" href="authentication/profile"><span class="oi oi-person" /> @context.User.Identity.Name</a>
                         <a class="nav-link btn btn-link text-light" @onclick="BeginSignOut"><span class="oi oi-account-logout" />Log out</a>
                     </Authorized>
