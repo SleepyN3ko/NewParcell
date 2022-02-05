@@ -2,6 +2,7 @@
 @inject HttpClient _client
 @inject NavigationManager _navManager
 @using Parcell.Client.Pages.BuySwap
+@using Parcell.Client.Components
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
 
@@ -78,6 +79,10 @@
                             </div>
                             <p>
                                 <button class="btn btn-round btn-danger" type="button" @onclick="AddToCart"><span class="oi oi-cart" />Add to Cart</button>
+                                @if (dialogOpen)
+                                {
+                                    <PopupConfirmation Title="Notification" OnClose="@CloseDialog" Username="@username" ProductName="@product.Name" ActionDone="@actionText"/>
+                                }
                             </p>
                         }
                     </div>
@@ -96,26 +101,30 @@
 
     public bool getusername = false;
     public bool swapDialogOpen { get; set; }
+    public bool dialogOpen { get; set; }
     public string username;
+    public string actionText;
     public int currentUserWishListId;
     private List<WishList> wishlists;
+    private List<WishListItem> wishlistitems;
     private WishList addNewWishList = new WishList();
     private WishList currentWishList;
+    public bool alreadyFound = false;
 
     public int currentUserCartId;
+    private List<CartItem> cartitems;
     private List<Cart> carts;
     private Cart addNewCart = new Cart();
     private Cart currentCart;
-    public CartItem currentcartitem;
-
 
     protected async override Task OnParametersSetAsync()
     {
         _interceptor.MonitorEvent();
         product = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{id}");
         wishlists = await _client.GetFromJsonAsync<List<WishList>>($"{Endpoints.WishListEndpoint}");
+        wishlistitems = await _client.GetFromJsonAsync<List<WishListItem>>($"{Endpoints.WishListItemEndpoint}");
         carts = await _client.GetFromJsonAsync<List<Cart>>($"{Endpoints.CartEndpoint}");
-
+        cartitems = await _client.GetFromJsonAsync<List<CartItem>>($"{Endpoints.CartItemEndpoint}");
     }
 
     private async Task AddToWishList()
@@ -144,7 +153,27 @@
         wishlistitem.Product_id = product.Id;
         wishlistitem.Date = DateTime.Now;
         wishlistitem.Wishlist_id = currentWishList.Id;
-        await _client.PostAsJsonAsync(Endpoints.WishListItemEndpoint, wishlistitem);
+
+        foreach (var currentwishlistitem in wishlistitems)
+        {
+            if (currentwishlistitem.Product_id == product.Id && currentwishlistitem.Wishlist_id == currentWishList.Id)
+            {
+                actionText = "is already added to your wishlist";
+                alreadyFound = true;
+                OpenDialog();
+            }
+        }
+        if (!alreadyFound)
+        {
+            var responseEnd = await _client.PostAsJsonAsync(Endpoints.WishListItemEndpoint, wishlistitem);
+            if (responseEnd.IsSuccessStatusCode)
+            {
+                actionText = "has been added to your wishlist.";
+                OpenDialog();
+            }
+        }
+        alreadyFound = false;
+        await OnParametersSetAsync();
     }
 
     private async Task AddToCart()
@@ -172,13 +201,57 @@
         cartitem.Product_id = product.Id;
         cartitem.Date = DateTime.Now;
         cartitem.Cart_id = currentCart.Id;
-        await _client.PostAsJsonAsync(Endpoints.CartItemEndpoint, cartitem);
+        foreach (var currentCartItem in cartitems)
+        {
+            if (currentCartItem.Product_id == product.Id && currentCartItem.Cart_id == currentCart.Id)
+            {
+                currentCartItem.Quantity += cartitem.Quantity;
+                var responseExisted = await _client.PutAsJsonAsync($"{Endpoints.CartItemEndpoint}/{currentCartItem.Id}", currentCartItem);
+                if (responseExisted.IsSuccessStatusCode)
+                {
+                    actionText = "has been added to an existing cart item.";
+                    alreadyFound = true;
+                    OpenDialog();
+                }
+            }
+        }
+        if (!alreadyFound)
+        {
+            var responseEnd = await _client.PostAsJsonAsync(Endpoints.CartItemEndpoint, cartitem);
+            if (responseEnd.IsSuccessStatusCode)
+            {
+                actionText = "has been added as a new cart item.";
+                OpenDialog();
+            }
+        }
+        alreadyFound = false;
+        await OnParametersSetAsync();
     }
 
 
 
 
     //https://www.bootdey.com/snippets/view/shop-product-detail#html
+
+
+
+
+    private async Task CloseDialog(bool accepted)
+    {
+        dialogOpen = false;
+        StateHasChanged();
+    }
+    private void OpenDialog()
+    {
+        dialogOpen = true;
+        StateHasChanged();
+    }
+
+
+
+
+
+
 
     private async Task CloseSwapDialog(bool accepted)
     {
