@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class test : Migration
+    public partial class getdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -439,9 +439,10 @@ namespace Parcell.Server.Migrations
                 columns: new[] { "Id", "Description", "Name", "Thumbnail" },
                 values: new object[,]
                 {
-                    { 1, "Other things you might want to get", "Others", null },
-                    { 2, "Things you need to have in your house", "Household", null },
-                    { 3, "Things you would have in an office", "Office", null }
+                    { 1, "Products that cannot be swapped", "noswap", null },
+                    { 2, "Other things you might want to get", "Others", null },
+                    { 3, "Things you need to have in your house", "Household", null },
+                    { 4, "Things you would have in an office", "Office", null }
                 });
 
             migrationBuilder.InsertData(

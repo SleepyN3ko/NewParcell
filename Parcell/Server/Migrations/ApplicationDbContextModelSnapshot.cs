@@ -469,18 +469,24 @@ namespace Parcell.Server.Migrations
                         new
                         {
                             Id = 1,
+                            Description = "Products that cannot be swapped",
+                            Name = "noswap"
+                        },
+                        new
+                        {
+                            Id = 2,
                             Description = "Other things you might want to get",
                             Name = "Others"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             Description = "Things you need to have in your house",
                             Name = "Household"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             Description = "Things you would have in an office",
                             Name = "Office"
                         });

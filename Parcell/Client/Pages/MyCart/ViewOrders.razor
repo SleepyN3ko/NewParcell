@@ -6,7 +6,6 @@
 @attribute [Authorize]
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
-
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
@@ -147,7 +146,7 @@ else
         }
         else
         {
-            var confirm = await js.InvokeAsync<bool>("topup", $"Your account has insufficient balance to pay for this order. Please go topup");
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Your account has insufficient balance to pay for this order. Please go topup");
             if (confirm)
             {
                 _navManager.NavigateTo("topup");
