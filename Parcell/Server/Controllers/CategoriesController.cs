@@ -15,7 +15,7 @@ namespace Parcell.Server.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-
+        //controller for categories
         private readonly IUnitOfWork _unitOfWork;
         public CategoriesController(IUnitOfWork unitOfWork)
         {

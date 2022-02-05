@@ -12,6 +12,7 @@ namespace Parcell.Server.Configurations.Entities
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            //some testing seed to prevent null error
             builder.HasData(
              new Product
              {

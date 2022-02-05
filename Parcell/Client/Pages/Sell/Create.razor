@@ -5,9 +5,11 @@
 <h3 class="card-title">Sell more products</h3>
 <hr />
 <br />
+@* Page for creating new products *@
 <FormComponent ButtonText="Create" OnValidSubmit="CreateProduct" product="product" />
 @code {
     Product product = new Product();
+    //posting of created product to database
     private async Task CreateProduct()
     {
         await _client.PostAsJsonAsync(Endpoints.ProductsEndpoint, product);

@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for wishlists
     [Route("api/[controller]")]
     [ApiController]
     public class WishListsController : ControllerBase
@@ -90,7 +91,7 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.WishLists.Insert(wishList);
             await _unitOfWork.Save(HttpContext);
-            //return CreatedAtAction("GetWishList", new { id = wishList.Id }, wishList);
+            //customised API for returning location of wishlist that was just created
             return CreatedAtAction(nameof(GetWishList), new { id = wishList.Id }, wishList);
         }
 

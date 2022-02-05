@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for swap products
     [Route("api/[controller]")]
     [ApiController]
     public class SwapsController : ControllerBase

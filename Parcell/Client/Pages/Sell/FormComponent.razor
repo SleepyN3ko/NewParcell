@@ -2,7 +2,7 @@
 @using Parcell.Client.Components
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
-
+@* Generalised form for the Creation and Updating of Products *@
 <EditForm Model="@product" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
     <AuthorizeView Context="getName">

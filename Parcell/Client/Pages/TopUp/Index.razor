@@ -35,6 +35,7 @@ else
     {
         _interceptor.MonitorEvent();
         balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
+        //code used to generate a new balance for the user
         foreach (var balance in balances)
         {
             if (balance.Username == username)
@@ -47,6 +48,7 @@ else
         {
             currentBalance.Username = username;
             var response = await _client.PostAsJsonAsync(Endpoints.BalancesEndpoint, currentBalance);
+            //customised API which returns where the is the created balance
             string location = response.Headers.Location.AbsoluteUri;
             currentBalance = await _client.GetFromJsonAsync<Balance>($"{location}");
             balanceid = currentBalance.Id;
@@ -57,9 +59,14 @@ else
 
     async Task addBalance()
     {
-        currentBalance.Amount += amountToAdd;
-        await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
-        await OnInitializedAsync();
+        //add the user inputed amount to their balance
+        //prevents user from removing money from their own balance
+        if (amountToAdd > 0)
+        {
+            currentBalance.Amount += amountToAdd;
+            await _client.PutAsJsonAsync($"{Endpoints.BalancesEndpoint}/{currentBalance.Id}", currentBalance);
+            await OnInitializedAsync();
+        }
     }
     public void Dispose()
     {

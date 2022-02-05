@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for wishlistitems which are the items inside every user's wishlist
     [Route("api/[controller]")]
     [ApiController]
     public class WishListItemsController : ControllerBase

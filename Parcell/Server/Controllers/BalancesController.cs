@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for balances
     [Route("api/[controller]")]
     [ApiController]
     public class BalancesController : ControllerBase
@@ -90,6 +91,7 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.Balances.Insert(balance);
             await _unitOfWork.Save(HttpContext);
+            //customised API for returning location of balance that was just created
             return CreatedAtAction(nameof(GetBalance), new { id = balance.Id }, balance);
         }
 

@@ -68,9 +68,7 @@ else
     {
         _interceptor.MonitorEvent();
         swaps = await _client.GetFromJsonAsync<List<Swap>>($"{Endpoints.SwapsEndpoint}");
-        //need to get all products here as async code cannot be run above
-        //also swap cannot store username as that causes data redundency
-        //no method of optimising this without using redundent data
+        //Assigns the product to swap so that it can be more easily accessed
         foreach (var swap in swaps)
         {
             swap.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.SProduct_id}");
@@ -80,6 +78,7 @@ else
     }
     async Task RemoveFromSwap(int swapitemid, string productName)
     {
+        //javascript interop to confirm that the user wants to delete the swap
         var swapitem = swaps.First(q => q.Id == swapitemid);
 
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {productName}?");

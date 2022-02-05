@@ -84,6 +84,7 @@ else
         orderitems = await _client.GetFromJsonAsync<List<OrderItem>>($"{Endpoints.OrderItemsEndpoint}");
         currentOrder = await _client.GetFromJsonAsync<Order>($"{Endpoints.OrdersEndpoint}/{id}");
         products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
+        //assigns the corresponding product to the orderitem for easier access
         foreach (var orderitem in orderitems)
         {
             foreach (var product in products)
@@ -94,7 +95,7 @@ else
                 }
             }
         }
-
+        //gets the balance of the current user
         balances = await _client.GetFromJsonAsync<List<Balance>>($"{Endpoints.BalancesEndpoint}");
         foreach (var balance in balances)
         {
@@ -104,6 +105,7 @@ else
                 balanceid = balance.Id;
             }
         }
+        //creates a new balance with 0 Pcoins if user has not made a balance yet
         if (balanceid == -69)
         {
             currentBalance.Username = username;
@@ -132,6 +134,7 @@ else
                 {
                     if (orderitem.Order_id == currentOrder.Id)
                     {
+                        //pays the product owner the required amount and reduces the item in stock of the corresponding product
                         currentProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{orderitem.Product_id}");
                         Balance balance = balances.First(q => q.Username == currentProduct.Username);
                         balance.Amount += orderitem.Product_Price * orderitem.Product_Quantity;
@@ -146,6 +149,7 @@ else
         }
         else
         {
+            //uses javascript interop to invoke the alert function for user to topup due to insufficient balance
             var confirm = await js.InvokeAsync<bool>("confirm", $"Your account has insufficient balance to pay for this order. Please go topup");
             if (confirm)
             {

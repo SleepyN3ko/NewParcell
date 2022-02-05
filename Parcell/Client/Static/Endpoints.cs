@@ -7,6 +7,7 @@ namespace Parcell.Client.Static
 {
     public static class Endpoints
     {
+        //API Endpoints to access our database through HTTP requests
         private static readonly string Prefix = "api";
         public static readonly string ProductsEndpoint = $"{Prefix}/products";
         public static readonly string CategoriesEndpoint = $"{Prefix}/categories";

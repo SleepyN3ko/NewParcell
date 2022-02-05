@@ -12,6 +12,7 @@ namespace Parcell.Server.Configurations.Entities
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
+            //Seed for all the categories the products can ever have
             builder.HasData(
              new Category
              {

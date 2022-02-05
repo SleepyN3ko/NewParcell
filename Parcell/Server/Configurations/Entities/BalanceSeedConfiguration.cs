@@ -12,6 +12,7 @@ namespace Parcell.Server.Configurations.Entities
     {
         public void Configure(EntityTypeBuilder<Balance> builder)
         {
+            //just a seed to prevent error when balance is initially null
             builder.HasData(
              new Balance
              {

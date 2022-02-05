@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for carts
     [Route("api/[controller]")]
     [ApiController]
     public class CartsController : ControllerBase
@@ -90,7 +91,7 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.Carts.Insert(cart);
             await _unitOfWork.Save(HttpContext);
-            //return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
+            //customised API for returning location of cart that was just created
             return CreatedAtAction(nameof(GetCart), new { id = cart.Id }, cart);
         }
 

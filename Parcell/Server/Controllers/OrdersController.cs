@@ -11,6 +11,7 @@ using Parcell.Shared.Domain;
 
 namespace Parcell.Server.Controllers
 {
+    //controller for orders
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
@@ -90,6 +91,7 @@ namespace Parcell.Server.Controllers
 
             await _unitOfWork.Orders.Insert(order);
             await _unitOfWork.Save(HttpContext);
+            //customised API for returning location of order that was just created
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 

@@ -12,6 +12,7 @@ namespace Parcell.Server.Configurations.Entities
     {
         public void Configure(EntityTypeBuilder<Cart> builder)
         {
+            //seed to prevent null
             builder.HasData(
              new Cart
              {

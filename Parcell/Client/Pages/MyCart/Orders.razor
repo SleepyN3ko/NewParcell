@@ -81,12 +81,13 @@ else
     }
     async Task RemoveOrder(int orderid)
     {
+        //remove order confirmation
         var order = orders.First(q => q.Id == orderid);
 
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove Order #{orderid} from your cart?");
         if (confirm)
         {
-            //remove the order and all its related orderitems
+            //remove the order and all its related orderitems when order has been confirmed to be removed
             await _client.DeleteAsync($"{Endpoints.OrdersEndpoint}/{orderid}");
             foreach (var orderitem in orderitems)
             {

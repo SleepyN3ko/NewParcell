@@ -1,10 +1,9 @@
 ﻿@page "/buyswap"
 @inject HttpClient _client
 @inject IJSRuntime js
-@attribute [Authorize]
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
-
+@attribute [Authorize]
 <link rel="stylesheet" type="text/css" href="/css/Sell.css" />
 
 @if (finished == false)
@@ -16,6 +15,7 @@
 else
 {
     <AuthorizeView Context="getName">
+        @* For when the users are logged in *@
         <Authorized>
             <a2>All products for sale</a2>
             <div class="table-responsive">
@@ -33,6 +33,7 @@ else
                     <tbody>
                         @foreach (var product in Products)
                         {
+                            //filtering to see only products that do not belong to the user
                             @if (product.Username != getName.User.Identity.Name)
                             {
 
@@ -71,47 +72,6 @@ else
                 </table>
             </div>
         </Authorized>
-        <NotAuthorized>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Details</th>
-                            <th>Category</th>
-                            <th>Picture</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var product in Products)
-                        {
-                            <tr>
-                                <td>@product.Name</td>
-                                <td>
-                                    <ul>
-                                        <li>Description = @product.Description</li>
-                                        <li>Stock = @product.Stock</li>
-                                        <li>Price = @product.Price</li>
-                                    </ul>
-                                </td>
-                                <td>@product.P_category</td>
-                                <td><img style="width:80px;height:80px" src="@product.Image" onerror="this.onerror = null;this.src='/images/imageNotFound.png'" alt="Missing Image" /></td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </NotAuthorized>
     </AuthorizeView>
 }
 
@@ -120,30 +80,15 @@ else
 @code {
 
     private List<Product> Products;
-    public List<string> selected_P_Category = new List<string>();
-    public List<string> selected_S_Category = new List<string>();
     public Boolean finished = false;
 
     protected async override Task OnInitializedAsync()
     {
         _interceptor.MonitorEvent();
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
-        foreach (var product in Products)
-        {
-            if (!selected_P_Category.Contains(product.P_category) && selected_P_Category.Any())
-            {
-                Products.Remove(product);
-            }
-        }
-        foreach (var product in Products)
-        {
-            if (!selected_S_Category.Contains(product.S_Category) && selected_S_Category.Any())
-            {
-                Products.Remove(product);
-            }
-        }
         finished = true;
     }
+    //Javascript interop for creating datatables
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await js.InvokeVoidAsync("AddDataTable", "#productsTable");

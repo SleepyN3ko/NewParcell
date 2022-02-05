@@ -19,6 +19,7 @@ namespace Parcell.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+        //set db for these models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -34,7 +35,7 @@ namespace Parcell.Server.Data
         {
             base.OnModelCreating(builder);
 
-
+            //add seedconfiguration to database
             builder.ApplyConfiguration(new ProductSeedConfiguration());
             builder.ApplyConfiguration(new CategorySeedConfiguration());
             builder.ApplyConfiguration(new WishListItemSeedConfiguration());

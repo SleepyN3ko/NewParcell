@@ -15,6 +15,7 @@
 
 else
 {
+    //displays all the products owned by the user
     <AuthorizeView Context="getName">
         <div class="table-responsive">
             <table class="table">
@@ -32,6 +33,7 @@ else
                 <tbody>
                     @foreach (var product in Products)
                     {
+                        //filtering to check if the product belongs to the user
                         @if (product.Username == getName.User.Identity.Name)
                         {
 
@@ -89,6 +91,7 @@ else
 
     async Task Delete(int productId)
     {
+        //Deletes a product selected by the user
         var product = Products.First(q => q.Id == productId);
 
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {product.Name}?");

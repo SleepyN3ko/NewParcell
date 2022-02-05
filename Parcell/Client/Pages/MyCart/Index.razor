@@ -146,6 +146,7 @@ else
 
     async Task RemoveFromCart(int cartitemid, string productName)
     {
+        //removes the selected cart item from cart.
         var cartitem = cartitems.First(q => q.Id == cartitemid);
 
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your cart?");

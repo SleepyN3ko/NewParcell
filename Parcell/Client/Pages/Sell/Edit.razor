@@ -4,6 +4,7 @@
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
 <h3>Edit Product</h3>
+@* Page for editing a specific product *@
 <FormComponent ButtonText="Update" OnValidSubmit="EditProduct" product="product" />
 @code {
     [Parameter] public int id { get; set; }
@@ -13,6 +14,7 @@
         _interceptor.MonitorEvent();
         product = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{id}");
     }
+    //Replaces the existing product with updated product through a PUT Request
     async Task EditProduct()
     {
         await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{id}", product);

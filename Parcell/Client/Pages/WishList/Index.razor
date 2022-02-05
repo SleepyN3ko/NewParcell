@@ -113,7 +113,7 @@ else
     async Task RemoveFromWishList(int wishitemid, string productName)
     {
         var wishitem = wishlistitems.First(q => q.Id == wishitemid);
-
+        //removes selected wishlistitem from user's wishlist if confirmed
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to remove {productName} from your wishlist?");
         if (confirm)
         {

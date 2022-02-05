@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject HttpClient _client
 @attribute [Authorize]
-
+@* Modal popup to show what happen in the myswap/view page. *@
 <div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);"
      aria-modal="true" role="dialog">
     <div class="modal-dialog">
@@ -43,7 +43,7 @@
     }
 
     public bool DeleteDialogOpen { get; set; }
-
+    //code to open and control the modal
     private Task ModalCancel()
     {
         return OnClose.InvokeAsync(false);

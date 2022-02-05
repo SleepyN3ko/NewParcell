@@ -8,6 +8,7 @@ using Toolbelt.Blazor;
 
 namespace Parcell.Client.Services
 {
+    //Error handling system with HttpInterceptorService
     public class HttpInterceptorService
     {
         private readonly HttpClientInterceptor interceptor;

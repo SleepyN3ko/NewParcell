@@ -105,17 +105,20 @@
     protected async override Task OnInitializedAsync()
     {
         _interceptor.MonitorEvent();
+        //code to detect a change in the EditForm
         editContext = new EditContext(swapdetails);
         editContext.OnFieldChanged += EditContext_OnFieldChanged;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
         if (addingProduct)
         {
+            //swapdetails when adding a product
             swapdetails.SStatus = true;
             swapdetails.PStatus = false;
             swapdetails.PProduct_id = product.Id;
         }
         else
         {
+            //for counter offer functionality
             swapdetails.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swapdetails.PProduct_id}");
             swapdetails.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swapdetails.SProduct_id}");
             sString = swapdetails.SProduct.Username == s_Username ? "My" : "Their";

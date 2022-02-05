@@ -3,12 +3,13 @@
 @inject NavigationManager _navManager
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
-@using Parcell.Client.Pages.BuySwap
+@using Parcell.Client.Components
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
 @if (finished == true)
 {
+    //Custom css to divide website into 3 equal columns and fits images into a div
     <div style="width:100%;padding-left:5%;padding-right:5%;">
         <div style="width: 33%; height: 100%; float: left; text-align: center; position: relative;" class="center">
             <h4>Swapper: @swap.SProduct.Username</h4>
@@ -31,6 +32,7 @@
                 <p><button class="btn btn-round" style="background-color:green;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-loop"></span> Open Counter Offer</button></p>
                 @if (swapDialogOpen)
                 {
+                    //accesses the swapdialog component so send a counter offer
                     <SwapDialog swapdetails="@swap" s_Username="@username" Title="Counter Offer" OnClose="@CloseSwapDialog" OnValidSubmit="@PutSwap" ButtonText="Send Counter Offer" addingProduct="@false"/>
                 }
             }
@@ -71,12 +73,14 @@
         swap = await _client.GetFromJsonAsync<Swap>($"{Endpoints.SwapsEndpoint}/{id}");
         swap.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.SProduct_id}");
         swap.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swap.PProduct_id}");
+        //changing css and data shown on the page
         swapButtonColor = swap.SStatus == false ? "btn-danger" : "btn-success";
         swapButtonText = swap.SStatus == false ? "Waiting" : "Accepted";
         disableSwapButton = swap.SProduct.Username == username ? false : true;
         productButtonColor = swap.PStatus == false ? "btn-danger" : "btn-success";
         productButtonText = swap.PStatus == false ? "Waiting" : "Accepted";
         disableProductButton = swap.PProduct.Username == username ? false : true;
+        //logic for initial text displayed in the center
         if (swap.PStatus == true && swap.SStatus == true)
         {
             message = "Swap has been accepted";
@@ -100,11 +104,13 @@
     }
     private async Task ToggleSwapStatus()
     {
+        //toggles the swap status and immediately updates the swap through PUT request
         swap.SStatus = !swap.SStatus;
         await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
         await OnParametersSetAsync();
         if (swap.PStatus == true && swap.SStatus == true)
         {
+            //When both users agree to a swap the product quantity of both products are removed
             swap.PProduct.Stock -= swap.PProduct_quantity;
             await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
             swap.SProduct.Stock -= swap.SProduct_quantity;
@@ -114,12 +120,13 @@
     }
     private async Task ToggleProductStatus()
     {
-
+        //same as the function above but for product owner split into two parts for readability of code
         swap.PStatus = !swap.PStatus;
         await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{id}", swap);
         await OnParametersSetAsync();
         if (swap.PStatus == true && swap.SStatus == true)
         {
+            //When both users agree to a swap remove the stock of the product
             swap.PProduct.Stock -= swap.PProduct_quantity;
             await _client.PutAsJsonAsync($"{Endpoints.ProductsEndpoint}/{swap.PProduct.Id}", swap.PProduct);
             swap.SProduct.Stock -= swap.SProduct_quantity;
@@ -127,7 +134,7 @@
         }
         StateHasChanged();
     }
-
+    //Functions for controlling the counter offer dialog
     private async Task CloseSwapDialog(bool accepted)
     {
         swapDialogOpen = false;
@@ -138,6 +145,7 @@
         swapDialogOpen = true;
         StateHasChanged();
     }
+    //updates the swap with new details
     async Task PutSwap()
     {
         await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{swap.Id}", swap);
