@@ -14,47 +14,50 @@
             <div class="modal-body">
                 <EditForm EditContext="editContext" OnValidSubmit="@OnValidSubmit">
                     <DataAnnotationsValidator />
-                    <div class="form-group">
-                        <label>Choose your product to swap with</label>
-                        <div>
-                            <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
-                                @if (Products != null)
-                                {
-                                    <option value="" default="true" hidden>--Select--</option>
-                                    foreach (var eachproduct in Products)
-                                    {
-                                        if (eachproduct.Username == s_Username)
+                    @if (addingProduct)
+                    {
+                        <div class="form-group">
+                            <label>Choose your product to swap with</label>
+                            <div>
+                                <InputSelect @bind-Value="swapdetails.SProduct_id" class="form-control">
+                                    @if (Products != null)
                                         {
-
-                                            if (eachproduct.P_category == product.S_Category)
+                                        <option value="" default="true" hidden>--Select--</option>
+                                            foreach (var eachproduct in Products)
                                             {
-                                                <option value="@eachproduct.Id" default>@eachproduct.Name</option>
-                                                suitable_products = true;
+                                                if (eachproduct.Username == s_Username)
+                                                {
+
+                                                    if (eachproduct.P_category == product.S_Category)
+                                                    {
+                                                    <option value="@eachproduct.Id" default>@eachproduct.Name</option>
+                                                        suitable_products = true;
+                                                    }
+                                                }
+                                            }
+                                            if (suitable_products == false)
+                                            {
+
+                                            <option value="">No suitable products</option>
                                             }
                                         }
-                                    }
-                                    if (suitable_products == false)
-                                    {
-
-                                        <option value="">No suitable products</option>
-                                    }
-                                }
-                            </InputSelect>
-                            <ValidationMessage For="@(()=>swapdetails.SProduct_id)" />
+                                </InputSelect>
+                                <ValidationMessage For="@(() => swapdetails.SProduct_id)" />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div class="form-group">
-                        <label title="How much you swapping">My product quantity</label>
+                        <label>@sString product quantity</label>
                         <div>
                             <InputNumber @bind-Value="swapdetails.SProduct_quantity" class="form-control" />
-                            <ValidationMessage For="@(()=>swapdetails.SProduct_quantity)" />
+                            <ValidationMessage For="@(() => swapdetails.SProduct_quantity)" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label title="How much you want to get">Their product quantity</label>
+                        <label>@pString product quantity</label>
                         <div>
                             <InputNumber @bind-Value="swapdetails.PProduct_quantity" class="form-control" />
-                            <ValidationMessage For="@(()=>swapdetails.PProduct_quantity)" />
+                            <ValidationMessage For="@(() => swapdetails.PProduct_quantity)" />
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success btn-block" disabled="@disable_button">
@@ -89,11 +92,15 @@
     [Parameter]
     public string ButtonText { get; set; }
 
+    [Parameter]
+    public bool addingProduct { get; set; } = true;
+
     private List<Product> Products;
     public Boolean disable_button = true;
-    Product sProduct = new Product();
     EditContext editContext;
     public Boolean suitable_products = false;
+    public string sString = "My";
+    public string pString = "Their";
 
     protected async override Task OnInitializedAsync()
     {
@@ -101,12 +108,22 @@
         editContext = new EditContext(swapdetails);
         editContext.OnFieldChanged += EditContext_OnFieldChanged;
         Products = await _client.GetFromJsonAsync<List<Product>>($"{Endpoints.ProductsEndpoint}");
-        swapdetails.SStatus = true;
-        swapdetails.PStatus = false;
+        if (addingProduct)
+        {
+            swapdetails.SStatus = true;
+            swapdetails.PStatus = false;
+            swapdetails.PProduct_id = product.Id;
+        }
+        else
+        {
+            swapdetails.PProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swapdetails.PProduct_id}");
+            swapdetails.SProduct = await _client.GetFromJsonAsync<Product>($"{Endpoints.ProductsEndpoint}/{swapdetails.SProduct_id}");
+            sString = swapdetails.SProduct.Username == s_Username ? "My" : "Their";
+            pString = swapdetails.PProduct.Username == s_Username ? "My" : "Their";
+            swapdetails.SStatus = swapdetails.SProduct.Username == s_Username ? true : false;
+            swapdetails.PStatus = swapdetails.PProduct.Username == s_Username ? true : false;
+        }
         swapdetails.Date = DateTime.Now;
-        //swapdetails.S_username = s_Username;
-        //swapdetails.P_username = product.Username;
-        swapdetails.PProduct_id = product.Id;
 
     }
     private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
@@ -118,7 +135,6 @@
             disable_button = false;
         }
     }
-    public bool DeleteDialogOpen { get; set; }
 
     private Task ModalCancel()
     {

@@ -79,11 +79,11 @@
                             </div>
                             <p>
                                 <button class="btn btn-round btn-danger" type="button" @onclick="AddToCart"><span class="oi oi-cart" />Add to Cart</button>
-                                @if (dialogOpen)
-                                {
-                                    <PopupConfirmation Title="Notification" OnClose="@CloseDialog" Username="@username" ProductName="@product.Name" ActionDone="@actionText"/>
-                                }
                             </p>
+                        }
+                        @if (dialogOpen)
+                        {
+                            <PopupConfirmation Title="Notification" OnClose="@CloseDialog" Username="@username" ProductName="@product.Name" ActionDone="@actionText" />
                         }
                     </div>
                 </div>

@@ -3,7 +3,7 @@
 @inject NavigationManager _navManager
 @inject HttpInterceptorService _interceptor
 @implements IDisposable
-
+@using Parcell.Client.Pages.BuySwap
 <AuthorizeView Context="getName">
     @{ username = getName.User.Identity.Name;}
 </AuthorizeView>
@@ -22,10 +22,21 @@
             <br />
             <button type="button" class="btn @swapButtonColor" @onclick="@ToggleSwapStatus" disabled="@disableSwapButton">@swapButtonText</button>
         </div>
+
         <div style="width: 33%; float: left; text-align: center;" class="center">
             <h1>Current Status</h1>
             @message
+            @if (!(swap.PStatus == true && swap.SStatus == true))
+            {
+                <p><button class="btn btn-round" style="background-color:green;color:white" type="button" @onclick="()=>OpenSwapDialog()"><span class="oi oi-loop"></span> Open Counter Offer</button></p>
+                @if (swapDialogOpen)
+                {
+                    <SwapDialog swapdetails="@swap" s_Username="@username" Title="Counter Offer" OnClose="@CloseSwapDialog" OnValidSubmit="@PutSwap" ButtonText="Send Counter Offer" addingProduct="@false"/>
+                }
+            }
+
         </div>
+
         <div style="width: 33%; height: 100%; float: left; text-align: center; position: relative;" class="center">
             <h4>Owner: @swap.PProduct.Username</h4>
             <br />
@@ -46,6 +57,7 @@
     Swap swap = new Swap();
     public string swapButtonColor;
     public string swapButtonText;
+    public bool swapDialogOpen { get; set; }
     public Boolean disableSwapButton;
     public string productButtonColor;
     public string productButtonText;
@@ -115,6 +127,24 @@
         }
         StateHasChanged();
     }
+
+    private async Task CloseSwapDialog(bool accepted)
+    {
+        swapDialogOpen = false;
+        StateHasChanged();
+    }
+    private void OpenSwapDialog()
+    {
+        swapDialogOpen = true;
+        StateHasChanged();
+    }
+    async Task PutSwap()
+    {
+        await _client.PutAsJsonAsync($"{Endpoints.SwapsEndpoint}/{swap.Id}", swap);
+        swapDialogOpen = false;
+        await OnParametersSetAsync();
+    }
+
     public void Dispose()
     {
         _interceptor.DisposeEvent();
