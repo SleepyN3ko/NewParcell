@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parcell.Server.Migrations
 {
-    public partial class getdb : Migration
+    public partial class finalDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -162,7 +162,6 @@ namespace Parcell.Server.Migrations
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    Thumbnail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: false),
                     P_category = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     S_Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -301,7 +300,6 @@ namespace Parcell.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Product_id = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
@@ -364,7 +362,6 @@ namespace Parcell.Server.Migrations
                     SStatus = table.Column<bool>(type: "bit", nullable: false),
                     PStatus = table.Column<bool>(type: "bit", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Deadline = table.Column<int>(type: "int", nullable: false),
                     SProduct_id = table.Column<int>(type: "int", nullable: false),
                     SProduct_quantity = table.Column<int>(type: "int", nullable: false),
                     SProductId = table.Column<int>(type: "int", nullable: true),
@@ -396,7 +393,6 @@ namespace Parcell.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
                     Product_id = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     Wishlist_id = table.Column<int>(type: "int", nullable: false),
@@ -426,8 +422,8 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "CartItems",
-                columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Quantity", "Status" },
-                values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, 0, false });
+                columns: new[] { "Id", "CartId", "Cart_id", "Date", "ProductId", "Product_id", "Quantity" },
+                values: new object[] { 1, null, 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, 0 });
 
             migrationBuilder.InsertData(
                 table: "Carts",
@@ -447,17 +443,17 @@ namespace Parcell.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Description", "Image", "Name", "P_category", "Price", "S_Category", "Stock", "Swap_description", "Thumbnail", "Username" },
+                columns: new[] { "Id", "Description", "Image", "Name", "P_category", "Price", "S_Category", "Stock", "Swap_description", "Username" },
                 values: new object[,]
                 {
-                    { 1, "Green water bottle that has totally not been used before", null, "Water Bottle", "Household", 100, "noswap", 1, null, null, null },
-                    { 2, "Green file that has nothing in it", null, "File", "Office", 10, "Office", 10, null, null, null }
+                    { 1, "Green water bottle that has totally not been used before", null, "Water Bottle", "Household", 100, "noswap", 1, null, null },
+                    { 2, "Green file that has nothing in it", null, "File", "Office", 10, "Office", 10, null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "WishListItems",
-                columns: new[] { "Id", "Date", "ProductId", "Product_id", "Status", "Wishlist_id", "WistlistId" },
-                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, false, 0, null });
+                columns: new[] { "Id", "Date", "ProductId", "Product_id", "Wishlist_id", "WistlistId" },
+                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, 0, null });
 
             migrationBuilder.InsertData(
                 table: "WishLists",

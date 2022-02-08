@@ -10,8 +10,8 @@ using Parcell.Server.Data;
 namespace Parcell.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220205113919_minorupdate")]
-    partial class minorupdate
+    [Migration("20220207134135_finalDatabase")]
+    partial class finalDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -636,7 +636,7 @@ namespace Parcell.Server.Migrations
                     b.Property<bool>("PStatus")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("SProductId")
+                    b.Property<int?>("")
                         .HasColumnType("int");
 
                     b.Property<int>("SProduct_id")
